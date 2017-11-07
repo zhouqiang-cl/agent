@@ -6,19 +6,22 @@ import tornado.web
 import tornado.concurrent
 import tornado.gen
 
+from libs.misc import system
+
 class Runner(object):
     executor = ThreadPoolExecutor(max_workers=24)
     def __init__(self):
-        self._plugin_dir = ""
+        self._plugin_dir = "./plugin"
         self._running_queue = []
         self._isolate = []
     @tornado.concurrent.run_on_executor
-    def _async_execute(self):
+    def _async_execute(self,cmd):
+        plugin = cmd.split()[0]
         if plugin in self._isolate:
             self._running_queue[plugin] += 1
-        result = {
-            "status":"success"
-        }
+        # result = system(cmd)
+        print cmd
+        self._running_queue[plugin] -= 1
         return result
 
     @tornado.gen.coroutine
@@ -30,7 +33,7 @@ class Runner(object):
             raise PluginNotExistsException(plugin_name = plugin_name)
         if self._running_queue[plugin] > 1:
             raise PluginAlreadyInUseException(plugin_name = plugin_name)
-        result = self._async_execute()
+        result = self._async_execute(cmd)
         raise tornado.gen.Return(result)
 
     def _check_valid(self, cmd):

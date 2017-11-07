@@ -7,6 +7,7 @@ import tornado.concurrent
 import tornado.gen
 
 from libs.misc import system
+from iexceptions import PluginNotExistsException
 
 class Runner(object):
     executor = ThreadPoolExecutor(max_workers=24)
@@ -27,12 +28,12 @@ class Runner(object):
     @tornado.gen.coroutine
     def run_cmd(self, cmd):
         if not self._check_valid(cmd):
-            raise CommandInvalideException(cmd = cmd)
+            raise CommandInvalidateException(cmd = cmd)
         plugin = cmd.split()[0]
         if not os.path.exists(self._plugin_dir + "/" + plugin):
-            raise PluginNotExistsException(plugin_name = plugin_name)
+            raise PluginNotExistsException(plugin_name = plugin)
         if self._running_queue[plugin] > 1:
-            raise PluginAlreadyInUseException(plugin_name = plugin_name)
+            raise PluginSingletonException(plugin_name = plugin)
         result = self._async_execute(cmd)
         raise tornado.gen.Return(result)
 

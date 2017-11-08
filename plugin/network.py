@@ -14,30 +14,29 @@ class NetworkExecutor(models.executor.Executor):
     def __init__(self):
         self.tc = "tc"
         
-    def fail(self, operation, **kwargs):
+    def common_runner(self, action, operation, postfix, **kwargs):
         interface = kwargs["interface"] if "interface" in kwargs and kwargs["interface"] else "lo"
-        src = kwargs["src"] if "src" in kwargs else None
-        rate = kwargs["rate"] if "rate" in kwargs else 5
+        src = kwargs["src"] if "src" in kwargs and kwargs["src"] else None
+        rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 5
         if operation == "start":
-            cmd = "{tc} qdisc replace dev {interface} root netem corrupt {rate}%".format(tc=self.tc, interface=interface, rate=rate)
+            cmd = "{tc} qdisc replace dev {interface} root netem {action} {rate}{postfix}".format(tc=self.tc, interface=interface, rate=rate, action=action, postfix=postfix)
         elif operation == "stop":
-            cmd = "{tc} qdisc del dev {interface} root netem corrupt {rate}%".format(tc=self.tc, interface=interface, rate=rate)
+            #cmd = "{tc} qdisc del dev {interface} root netem corrupt {rate}%".format(tc=self.tc, interface=interface, rate=rate)
+            cmd = "{tc} qdisc replace dev {interface} root netem {action} 0{postfix}".format(tc=self.tc, interface=interface, action=action, postfix=postfix)
         #self._clear_related_cmd(cmd)
         self._execute_or_revert_cmd(cmd)
         result = self.report(interface)
         print result
         return result
+
+    def fail(self, operation, **kwargs):
+        return self.common_runner("corrupt",operation,"%", **kwargs)
     
     def delay(self, operation, **kwargs):
-        interface = kwargs["interface"] if "interface" in kwargs else "lo"
-        src = kwargs["src"] if "src" in kwargs else None
-        rate = kwargs["rate"] if "rate" in kwargs else 5 # in ms
-        cmd = "tc qdisc add dev lo root netem delay 3000ms"
-        self._clear_related_cmd(cmd)
-        return self._execute_or_revert_cmd(cmd)
+        return self.common_runner("delay",operation,"ms", **kwargs)
     
     def loss(self, operation, **kwargs):
-        pass
+        return self.common_runner("loss",operation,"%", **kwargs)
         
     def forbid(self, operation):
         pass
@@ -62,4 +61,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     executor = NetworkExecutor()
-    getattr(executor, args.action)(args.operation,interface=args.interface)
+    getattr(executor, args.action)(args.operation,interface=args.interface,rate=args.rate)

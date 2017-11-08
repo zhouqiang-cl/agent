@@ -53,6 +53,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Network Injection Simulation')
     parser.add_argument('operation', metavar='start/stop/status',
                         help='operations')
+    parser.add_argument('-a','--action', dest='action',metavar='fail/loss/forbid',
+                                    help='which action to take ')
     parser.add_argument('-i','--interface', dest='interface',
                         help='which interface to operation ')
     parser.add_argument('-r','--rate', dest='rate',
@@ -60,4 +62,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     executor = NetworkExecutor()
-    executor.fail(args.operation,interface=args.interface)
+    getattr(executor, args.action)(args.operation,interface=args.interface)

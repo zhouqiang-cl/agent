@@ -18,12 +18,13 @@ class Runner(object):
     @tornado.concurrent.run_on_executor
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
+        cmd = self._plugin_dir + "/" + cmd
         if plugin in self._isolate:
             self._running_queue[plugin] += 1
-            print "run script plugin here..."
+            print "run {cmd}".format(cmd=cmd)
             self._running_queue[plugin] -= 1
         else:
-            print "run script plugin here..."
+            print "run {cmd}".format(cmd=cmd)
         return {"result":True}
 
     def singleton_running(self,plugin):

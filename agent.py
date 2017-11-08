@@ -22,9 +22,13 @@ class Runner(object):
         if plugin in self._isolate:
             self._running_queue[plugin] += 1
             print "run {cmd}".format(cmd=cmd)
+            rc,so,se = system(cmd)
+            print "output",rc,so,se
             self._running_queue[plugin] -= 1
         else:
             print "run {cmd}".format(cmd=cmd)
+            rc,so,se = system(cmd)
+            print "output",rc,so,se
         return {"result":True}
 
     def singleton_running(self,plugin):

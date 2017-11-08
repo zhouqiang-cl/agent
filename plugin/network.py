@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import models.executor
 """
 Executor
@@ -8,14 +9,13 @@ Executor
   MemExecutor
   ...
 """
-
 class NetworkExecutor(models.executor.Executor):
     """as network"""
     def __init__(self):
         self.tc = "tc"
         
     def fail(self, operation, **kwargs):
-        interface = kwargs["interface"] if "interface" in kwargs else "eth0"
+        interface = kwargs["interface"] if "interface" in kwargs and kwargs["interface"] else "lo"
         src = kwargs["src"] if "src" in kwargs else None
         rate = kwargs["rate"] if "rate" in kwargs else 5
         if operation == "start":
@@ -29,7 +29,7 @@ class NetworkExecutor(models.executor.Executor):
         return result
     
     def delay(self, operation, **kwargs):
-        interface = kwargs["interface"] if "interface" in kwargs else "eth0"
+        interface = kwargs["interface"] if "interface" in kwargs else "lo"
         src = kwargs["src"] if "src" in kwargs else None
         rate = kwargs["rate"] if "rate" in kwargs else 5 # in ms
         cmd = "tc qdisc add dev lo root netem delay 3000ms"
@@ -50,5 +50,14 @@ class NetworkExecutor(models.executor.Executor):
     def record(self):
         pass
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Network Injection Simulation')
+    parser.add_argument('operation', metavar='start/stop/status',
+                        help='operations')
+    parser.add_argument('-i','--interface', dest='interface',
+                        help='which interface to operation ')
+    parser.add_argument('-r','--rate', dest='rate',
+                        help='how much rate to operation ')
+
+    args = parser.parse_args()
     executor = NetworkExecutor()
-    executor.fail("start",interface="lo")
+    executor.fail(args.operation,interface=args.interface)

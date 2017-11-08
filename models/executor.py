@@ -9,3 +9,12 @@ class Executor(object):
     @staticmethod
     def _clear_related_cmd(cmd):
         pass
+    @staticmethod
+    def _get_output(cmd):
+        rc,so,se = system(cmd)
+        ret = {
+            "rc":rc,
+            "so":so,
+            "se":se
+            }
+        return ret

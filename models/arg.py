@@ -10,10 +10,13 @@ class Arg(object):
         else:
             ret = copy.copy(cmd[0:-1])
             ret.extend([agrument, replacer, cmd[-1]])
-            cmd = " ".join(cmd)
+            ret = [str(item) for item in ret]
+            cmd = copy.copy(ret)
+            print cmd
+        cmd = " ".join(cmd)
         return cmd
 
 arg = Arg()
 if __name__ == "__main__":
     arg = Arg()
-    print arg.replace_argument("disk -i 100 -t 40 start","-t", 200)
+    print arg.replace_argument("disk -i 100 start","-t", 200)

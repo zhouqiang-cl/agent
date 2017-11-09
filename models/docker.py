@@ -11,8 +11,7 @@ class Docker(object):
         rc,so,se = system(cmd)
         if rc:
             raise RunCommandException(cmd=cmd, rc=rc, so=so, se=se)
-        netdev = so.strip().split()[3]
-        print netdev
+        netdev = so.strip().split()[2]
         if not netdev.startswith("cali"):
             raise NotCaliDevException(dev=netdev)
         return netdev

@@ -49,7 +49,9 @@ class Runner(object):
             from models.docker import docker
             from models.arg import arg
             interface = docker.get_netdev_for_ip(kwargs["ip"])
-            cmd = arg.replace_argument(cmd, "-a", interface)
+            print interface
+            cmd = arg.replace_argument(cmd, "-i", interface)
+        print cmd
         result = yield self._async_execute(cmd)
         raise tornado.gen.Return(result)
 

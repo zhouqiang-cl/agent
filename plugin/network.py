@@ -69,6 +69,8 @@ if __name__ == "__main__":
                                     help='which action to take ')
     parser.add_argument('-i','--interface', dest='interface',
                         help='which interface to operation ')
+    parser.add_argument('--container_ip', dest='container_ip',
+                        help='which container ip to operation ')
     parser.add_argument('-r','--rate', dest='rate',
                         help='how much rate to operation ')
     parser.add_argument('-s','--src', dest='src',
@@ -76,4 +78,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     executor = NetworkExecutor()
-    getattr(executor, args.action)(args.operation,interface=args.interface,rate=args.rate,src=args.src)
+    interface = args.interface
+    if args.container_ip:
+        from models.docker import docker
+        interface = docker.get_netdev_for_ip(args.container_ip)
+    getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)

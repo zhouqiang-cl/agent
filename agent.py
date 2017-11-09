@@ -45,6 +45,11 @@ class Runner(object):
             raise PluginNotExistsException(plugin_name = plugin)
         if not self.singleton_running(plugin):
             raise PluginSingletonException(plugin_name = plugin)
+        if "ip" in kwargs and kwargs["ip"]:
+            from models.docker import docker
+            from models.arg import arg
+            interface = docker.get_netdev_for_ip(kwargs["ip"])
+            cmd = arg.replace_argument(cmd, "-a", interface)
         result = yield self._async_execute(cmd)
         raise tornado.gen.Return(result)
 

@@ -12,3 +12,10 @@ class PluginSingletonException(Exception):
     """Raised when plugin can only run in singleton mode"""
     def __init__(self,plugin_name):
         pass
+class InvalidateIpException(Exception):
+    def __init__(self, ip):
+        pass
+
+class RunCommandException(Exception):
+    def __init__(self, cmd=None,rc=None, so=None, se=None):
+        pass

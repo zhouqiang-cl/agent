@@ -37,7 +37,7 @@ class Runner(object):
         return True
 
     @tornado.gen.coroutine
-    def run_cmd(self, cmd):
+    def run_cmd(self, cmd, **kwargs):
         if not self._check_valid(cmd):
             raise CommandInvalidateException(cmd = cmd)
         plugin = cmd.split()[0]
@@ -58,7 +58,8 @@ class AgentHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
         cmd = self.get_argument("cmd")
-        result = yield self._runner.run_cmd(cmd)
+        ip = self.get_argument("ip",None)
+        result = yield self._runner.run_cmd(cmd, ip=ip)
         print result
         self.finish(result)
 

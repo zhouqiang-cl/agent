@@ -58,8 +58,7 @@ class AgentHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
         cmd = self.get_argument("cmd")
-        ip = self.get_argument("ip",None)
-        result = yield self._runner.run_cmd(cmd, ip=ip)
+        result = yield self._runner.run_cmd(cmd)
         print result
         self.finish(result)
 

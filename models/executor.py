@@ -9,6 +9,10 @@ class Executor(object):
     @staticmethod
     def _clear_related_cmd(cmd):
         pass
+    
+    @staticmethod
+    def _system(cmd):
+        return system(cmd) 
     @staticmethod
     def _get_output(cmd):
         rc,so,se = system(cmd)

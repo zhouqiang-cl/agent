@@ -50,7 +50,7 @@ class DiskExecutor(models.executor.Executor):
         print cmd
         rc, so, se = self._system(cmd)
         print rc,so,se
-        cmd = "{tc} class add dev lo parent 1:0 classid 1:{port} htb rate {rate}kbps ceil {rate}kbps prio 0".format(
+        cmd = "{tc} class replace dev lo parent 1:0 classid 1:{port} htb rate {rate}kbps ceil {rate}kbps prio 0".format(
             tc=self._tc, port = port, rate = rate)
         print cmd
         rc, so, se = self._system(cmd)

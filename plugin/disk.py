@@ -67,11 +67,12 @@ class DiskExecutor(models.executor.Executor):
 
 
     def fail(self, operation, **kwargs):
-        """nbd-server -d"""
+        """nbd-client -d /dev/nbd1"""
     
     def delay(self, operation, **kwargs):
-        "tc ctrl bandwidth"
-        # pass
+        """tc ctrl bandwidth
+	tc filter show dev lo
+	"""
         volume = kwargs["volume"] if "volume" in kwargs and kwargs["volume"] else None
         if not volume:
             return
@@ -79,11 +80,11 @@ class DiskExecutor(models.executor.Executor):
         pid = self.get_pid(disk)
         port = self.get_port(pid)
         oport = port
-        print port
         port = self.to_illagle_port(int(port))
         self.limit_port(port, 1000, oport)
 
     def full(self, operation, **kwargs):
+        """dd if= of="""
         pass
 
     def quota(self, operation, **kwargs):

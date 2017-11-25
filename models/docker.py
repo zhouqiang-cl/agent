@@ -1,3 +1,4 @@
+import json
 from iexceptions import RunCommandException
 from libs.misc import system
 class Docker(object):
@@ -26,11 +27,14 @@ class Docker(object):
         pass
 
 
-    @staticmethod
-    def get_cgroup_path(dockername):
-        dirname = self._cgroup_dir + "/kubepods/besteffort/{pod_id}/{contianer_id}".format(pod_id=pod_id,contianer_id=contianer_id)
+    def get_cgroup_path(self, container_id):
         """docker inspect 7628d0ca4572"""
         # return yaml[0]["State"]["Pid"]
+        cmd = "docker inspect {container_id}".format(container_id=container_id)
+        rc,so,se = system(cmd)
+        so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
+        dirname = self._cgroup_dir + so + "/" + container_id
+        return dirname
 
      # kubectl get pods --namespace="dashboard-stable-test-zq"
      # kubectl describe po tidb-cluster-tikv-phkkk --namespace="dashboard-stable-test-demo-zq"
@@ -39,14 +43,16 @@ class Docker(object):
 
      # /sys/fs/cgroup/blkio/kubepods/besteffort/podbca350d7-d194-11e7-9a1b-1866dafb1d34/b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c
 
-    #  docker inspect b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c 可以获取到
+    #  docker inspect b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c can get pod 
     #  io.kubernetes.pod.uid
 
     # docker run -it --privileged=true -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7 centos bash
     # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7 -v /sbin/iptables:/sbin/iptables -v /usr/lib64/libip4tc.so.0:/usr/lib64/libip4tc.so.0 -v /usr/lib64/libip6tc.so.0:/usr/lib64/libip6tc.so.0 -v /usr/lib64/libxtables.so.10:/usr/lib64/libxtables.so.10  --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW centos bash 
 
 
-    #在docker里面安装 iproute,iptables
+    #in docker install iproute,iptables
     # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW centos bash
 
 docker = Docker()
+if __name__ == "__main__":
+    docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")

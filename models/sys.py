@@ -16,3 +16,9 @@ class Sys(object):
                 continue
             if line.split()[2] == mount:
                 return line.split()
+
+if __name__ == "__main__":
+    sys = Sys()
+    block = sys.get_block_by_mount("/data1")
+    print block
+    print sys.get_block_number(block)

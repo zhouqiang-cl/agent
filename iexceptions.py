@@ -19,3 +19,7 @@ class InvalidateIpException(Exception):
 class RunCommandException(Exception):
     def __init__(self, cmd=None,rc=None, so=None, se=None):
         pass
+
+class NotCaliDevException(Exception):
+    def __init__(self, dev=None):
+        pass

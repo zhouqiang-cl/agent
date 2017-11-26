@@ -78,6 +78,13 @@ class DiskHandler(tornado.web.RequestHandler):
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
 
+class NetworkHandler(tornado.web.RequestHandler):
+    def prepare(self):
+        self._runner = runner
+    @tornado.gen.coroutine
+    def get(self):
+        pass
+
 class SupportApis(tornado.web.RequestHandler):
     def get(self):
         apis = []
@@ -88,12 +95,19 @@ class SupportApis(tornado.web.RequestHandler):
                 "action":["limit","full","error"],
                 "dirname":"",
                 "container_id":"",
+                "rate":"",
                 "operation":["start","stop","status"]
             }
         }
         network = {
             "url":"/api/v1/network",
-            "description":"network injection for docker"
+            "description":"network injection for docker",
+            "args":{
+                "action":["delay","fail", "loss","limit","forbid"],
+                "container_ip":"",
+                "rate":"",
+                "operation":["start","stop","status"]
+            }
         }
         apis.append(disk)
         apis.append(network)

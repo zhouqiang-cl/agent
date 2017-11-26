@@ -2,7 +2,7 @@ from libs.misc import system
 class Sys(object):
     def get_block_number(self, block):
         # "ls -lhrt"
-        cmd = "ls -lhrt {block}".format(block)
+        cmd = "ls -lhrt {block}".format(block=block)
         # print "start running command '{cmd}'".format(cmd=cmd)
         # "brw-rw----. 1 root disk 8, 16 Nov  6 11:57 /dev/sdb"
         rc,so,se = system(cmd)

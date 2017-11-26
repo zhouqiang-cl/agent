@@ -73,8 +73,9 @@ class DiskHandler(tornado.web.RequestHandler):
         dirname = self.get_argument("dirname")
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
-        cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} {operation}".format(action=action, dirname=dirname, 
-            container_id=container_id, operation=operation)
+        rate = self.get_argument("rate",None)
+        cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
+            container_id=container_id, operation=operation, rate=rate)
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
 
@@ -83,7 +84,14 @@ class NetworkHandler(tornado.web.RequestHandler):
         self._runner = runner
     @tornado.gen.coroutine
     def get(self):
-        pass
+        action = self.get_argument("action")
+        container_ip = self.get_argument("container_ip")
+        operation = self.get_argument("operation")
+        rate = self.get_argument("rate",None)
+        cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, dirname=dirname, 
+            container_ip=container_ip, operation=operation, rate=rate)
+        result = yield self._runner.run_cmd(cmd)
+        self.finish(result)
 
 class SupportApis(tornado.web.RequestHandler):
     def get(self):

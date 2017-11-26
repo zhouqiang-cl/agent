@@ -126,6 +126,7 @@ def make_app():
     return tornado.web.Application([
         (r"/execute", AgentHandler),
         (r"/api/v1/disk", DiskHandler),
+        (r"/api/v1/network", NetworkHandler),
         (r"/api/v1/supportapis", SupportApis)
     ],
     )

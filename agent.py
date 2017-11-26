@@ -64,6 +64,8 @@ class AgentHandler(tornado.web.RequestHandler):
         self.finish(result)
 
 class DiskHandler(tornado.web.RequestHandler):
+    def prepare(self):
+        self._runner = runner
     @tornado.gen.coroutine
     def get(self):
         """./plugin/cgroup_disk.py -a limit -d /test-pd -c b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c start"""

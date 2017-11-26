@@ -52,6 +52,9 @@ class Docker(object):
                 return mount["Source"]
         return None
 
+    # def limit_disk(self, container_id, dirname, rate):
+        
+
 
      # kubectl get pods --namespace="dashboard-stable-test-zq"
      # kubectl describe po tidb-cluster-tikv-phkkk --namespace="dashboard-stable-test-demo-zq"

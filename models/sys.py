@@ -6,7 +6,7 @@ class Sys(object):
         # print "start running command '{cmd}'".format(cmd=cmd)
         # "brw-rw----. 1 root disk 8, 16 Nov  6 11:57 /dev/sdb"
         rc,so,se = system(cmd)
-        print rc, so, se
+        # print rc, so, se
         return "".join(so.split()[4:6]).replace(",",":")
     def get_block_by_mount(self, mount):
         cmd = "mount"
@@ -17,9 +17,12 @@ class Sys(object):
                 continue
             if line.split()[2] == mount:
                 return line.split()[0]
-
+    def write_to_cgroup(self,value, cgoup_path):
+        cmd = "echo {data} > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)
+        rc,so,se = system(cmd)
+sys = Sys()
 if __name__ == "__main__":
-    sys = Sys()
+    # sys = Sys()
     block = sys.get_block_by_mount("/data1")
     print block
     print sys.get_block_number(block)

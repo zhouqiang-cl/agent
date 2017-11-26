@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import models.executor
+from models.docker import docker
 class DiskExecutor(models.executor.Executor):
     """
         as disk
@@ -17,19 +18,25 @@ class DiskExecutor(models.executor.Executor):
     def fail(self, operation, **kwargs):
         """nbd-client -d /dev/nbd1"""
     
-    def delay(self, operation, **kwargs):
+    def limit(self, operation, **kwargs):
         """tc ctrl bandwidth
 	tc filter show dev lo
 	"""
-        volume = kwargs["volume"] if "volume" in kwargs and kwargs["volume"] else None
+        dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not volume:
             return
-        disk = self.get_volume(volume)
-        pid = self.get_pid(disk)
-        port = self.get_port(pid)
-        oport = port
-        port = self.to_illagle_port(int(port))
-        self.limit_port(port, 1000, oport)
+        container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
+        rate = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else 1048576
+        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
+        mount_dir = docker.get_mount_dir(container_id, dirname)
+        block = sys.get_block_by_mount("/data1")
+    # print block
+        block_num = sys.get_block_number(block)
+        data = block_num + " " + rate
+        sys.write_to_cgroup(data, cgroup_path)
+        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
+        sys.write_to_cgroup(data, cgroup_path)
+        # self.limit_port(port, 1000, oport)
 
     def full(self, operation, **kwargs):
         """dd if= of="""
@@ -49,7 +56,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Network Injection Simulation')
     parser.add_argument('operation', metavar='start/stop/status',
                         help='operations')
-    parser.add_argument('-a','--action', dest='action',metavar='fail/loss/delay/limit/forbid',
+    parser.add_argument('-a','--action', dest='action',metavar='fail/loss/limit/forbid',
                                     help='which action to take ')
     parser.add_argument('-d','--dirname', dest='dirname',
                         help='which dirname to operation ')
@@ -60,5 +67,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     executor = DiskExecutor()
-    getattr(executor, args.action)(args.operation,action=args.action,volume=args.volume,rate=args.rate)
+    getattr(executor, args.action)(args.operation,action=args.action,dirname=args.dirname,rate=args.rate,container_id=args.containerid)
 

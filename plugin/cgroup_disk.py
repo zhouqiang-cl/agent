@@ -11,12 +11,7 @@ class DiskExecutor(models.executor.Executor):
         https://www.cnblogs.com/weifeng1463/p/6805994.html
     """
     def __init__(self):
-        self._nbd_client = "nbd-client"
-        self._netstat = "netstat"
-        self._tc = "tc"
-        self._iptables = "iptables"
-        self._mount = "mount"
-        self._grep = "grep"
+        pass
 
 
     def fail(self, operation, **kwargs):

@@ -7,3 +7,12 @@ class Sys(object):
         rc,so,se = system(cmd)
         print rc, so, se
         return "".join(a.split()[4:6]).replace(",",":")
+    def get_block_by_mount(self, mount):
+        cmd = "mount"
+        rc,so,se = system(cmd)
+        for line in so.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            if line.split()[2] == mount:
+                return line.split()

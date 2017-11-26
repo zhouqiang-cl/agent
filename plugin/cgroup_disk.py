@@ -19,9 +19,6 @@ class DiskExecutor(models.executor.Executor):
         """nbd-client -d /dev/nbd1"""
     
     def limit(self, operation, **kwargs):
-        """tc ctrl bandwidth
-	tc filter show dev lo
-	"""
         dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not volume:
             return
@@ -30,22 +27,16 @@ class DiskExecutor(models.executor.Executor):
         cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
         mount_dir = docker.get_mount_dir(container_id, dirname)
         block = sys.get_block_by_mount("/data1")
-    # print block
         block_num = sys.get_block_number(block)
         data = block_num + " " + rate
         sys.write_to_cgroup(data, cgroup_path)
         cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
         sys.write_to_cgroup(data, cgroup_path)
-        # self.limit_port(port, 1000, oport)
-
     def full(self, operation, **kwargs):
         """dd if= of="""
         pass
 
     def quota(self, operation, **kwargs):
-        pass
-        
-    def _report_disk(self, interface):
         pass
 
     def record(self):

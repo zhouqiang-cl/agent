@@ -59,12 +59,29 @@ class AgentHandler(tornado.web.RequestHandler):
     def get(self):
         cmd = self.get_argument("cmd")
         result = yield self._runner.run_cmd(cmd)
-        print result
+        # print result
         self.finish(result)
+
+class SupportApis(tornado.web.RequestHandler):
+    def get(self):
+        apis = []
+        disk = {
+            "url":"/api/v1/disk",
+            "description":"disk injection for docker"
+        }
+        network = {
+            "url":"/api/v1/network",
+            "description":"network injection for docker"
+        }
+        apis.append(disk)
+        apis.append(network)
+        self.finish(json.dumps(apis))
+
 
 def make_app():
     return tornado.web.Application([
         (r"/execute", AgentHandler),
+        (r"/api/v1/supportapis", SupportApis)
     ],
     )
 

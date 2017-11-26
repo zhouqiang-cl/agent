@@ -25,14 +25,20 @@ class DiskExecutor(models.executor.Executor):
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
-        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
-        mount_dir = docker.get_mount_dir(container_id, dirname)
-        block = sys.get_block_by_mount("/data1")
-        block_num = sys.get_block_number(block)
-        data = block_num + " " + str(rate)
-        sys.write_to_cgroup(data, cgroup_path)
-        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
-        sys.write_to_cgroup(data, cgroup_path)
+        if kwargs["operation"] == "start":
+            cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
+            mount_dir = docker.get_mount_dir(container_id, dirname)
+            block = sys.get_block_by_mount(mount_dir)
+            block_num = sys.get_block_number(block)
+            data = block_num + " " + str(rate)
+            sys.write_to_cgroup(data, cgroup_path)
+            cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
+            sys.write_to_cgroup(data, cgroup_path)
+        elif kwargs["operation"] == "stop":
+            cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
+            sys.write_to_cgroup("", cgroup_path)
+            cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
+            sys.write_to_cgroup("", cgroup_path)
     def full(self, operation, **kwargs):
         """dd if= of="""
         pass

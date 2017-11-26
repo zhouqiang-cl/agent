@@ -56,10 +56,12 @@ if __name__ == "__main__":
                         help='operations')
     parser.add_argument('-a','--action', dest='action',metavar='fail/loss/delay/limit/forbid',
                                     help='which action to take ')
-    parser.add_argument('-v','--volume', dest='volume',
-                        help='which interface to operation ')
+    parser.add_argument('-d','--dirname', dest='dirname',
+                        help='which dirname to operation ')
     parser.add_argument('-r','--rate', dest='rate',
                         help='how much rate to operation ')
+    parser.add_argument('-c','--containerid', dest='containerid',
+                        help='which containerid to operation ')
 
     args = parser.parse_args()
     executor = DiskExecutor()

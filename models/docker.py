@@ -1,5 +1,5 @@
 import json
-from iexceptions import RunCommandException
+from iexceptions import RunCommandException, NotCaliDevException
 from libs.misc import system
 class Docker(object):
     def __init__(self):
@@ -22,9 +22,15 @@ class Docker(object):
         return True
 
     @staticmethod
-    def get_mount_host_volume():
+    def get_mount_dir(dirname):
         """docker inspect 7628d0ca4572"""
-        pass
+        cmd = "readlink -f {dirname}".format(dirname = dirname)
+        rc, so  ,se  = system(cmd)
+        dirname = so
+        if not so.startswith("/data"):
+            raise UnsupportDirException(dirname=dirname)
+        block_mount_dir = "/" + so.split("/")[1]
+        return block_mount_dir
 
 
     def get_cgroup_path(self, container_id):
@@ -35,6 +41,17 @@ class Docker(object):
         so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
         dirname = self._cgroup_dir + so + "/" + container_id
         return dirname
+
+    def get_mount_dir(self, container_id,dirname):
+        "Mounts"
+        cmd = "docker inspect {container_id}".format(container_id=container_id)
+        rc,so,se = system(cmd)
+        mounts = json.loads(so)[0]["Mounts"]
+        for mount in mounts:
+            if mount["Destination"] == dirname:
+                return mount["Source"]
+        return None
+
 
      # kubectl get pods --namespace="dashboard-stable-test-zq"
      # kubectl describe po tidb-cluster-tikv-phkkk --namespace="dashboard-stable-test-demo-zq"

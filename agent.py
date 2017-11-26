@@ -82,12 +82,12 @@ class SupportApis(tornado.web.RequestHandler):
         disk = {
             "url":"/api/v1/disk",
             "description":"disk injection for docker",
-            "args":[
+            "args":{
                 "action":["limit","full","error"],
                 "dirname":"",
                 "container_id":"",
                 "operation":["start","stop","status"]
-            ]
+            }
         }
         network = {
             "url":"/api/v1/network",

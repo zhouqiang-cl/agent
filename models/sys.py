@@ -7,7 +7,7 @@ class Sys(object):
         # "brw-rw----. 1 root disk 8, 16 Nov  6 11:57 /dev/sdb"
         rc,so,se = system(cmd)
         print rc, so, se
-        return "".join(a.split()[4:6]).replace(",",":")
+        return "".join(so.split()[4:6]).replace(",",":")
     def get_block_by_mount(self, mount):
         cmd = "mount"
         rc,so,se = system(cmd)

@@ -63,12 +63,31 @@ class AgentHandler(tornado.web.RequestHandler):
         # print result
         self.finish(result)
 
+class DiskHandler(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        """./plugin/cgroup_disk.py -a limit -d /test-pd -c b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c start"""
+        action = self.get_argument("action")
+        dirname = self.get_argument("dirname")
+        container_id = self.get_argument("container_id")
+        operation = self.get_argument("operation")
+        cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} {operation}".format(action=action, dirname=dirname, 
+            container_id=container_id, operation=operation)
+        result = yield self._runner.run_cmd(cmd)
+        self.finish(result)
+
 class SupportApis(tornado.web.RequestHandler):
     def get(self):
         apis = []
         disk = {
             "url":"/api/v1/disk",
-            "description":"disk injection for docker"
+            "description":"disk injection for docker",
+            "args":[
+                "action":["limit","full","error"],
+                "dirname":"",
+                "container_id":"",
+                "operation":["start","stop","status"]
+            ]
         }
         network = {
             "url":"/api/v1/network",
@@ -82,6 +101,7 @@ class SupportApis(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         (r"/execute", AgentHandler),
+        (r"/api/v1/disk", DiskHandler),
         (r"/api/v1/supportapis", SupportApis)
     ],
     )

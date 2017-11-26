@@ -19,6 +19,8 @@ class NetworkExecutor(models.executor.Executor):
         interface = kwargs["interface"] if "interface" in kwargs and kwargs["interface"] else "lo"
         src = kwargs["src"] if "src" in kwargs and kwargs["src"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 5
+        if rate == "None":
+            rate = 5
         if operation == "start":
             cmd = "{tc} qdisc replace dev {interface} root netem {action} {rate}{postfix}".format(tc=self._tc, interface=interface, rate=rate, action=action, postfix=postfix)
         elif operation == "stop":

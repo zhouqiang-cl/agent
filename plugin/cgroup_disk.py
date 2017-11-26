@@ -25,7 +25,7 @@ class DiskExecutor(models.executor.Executor):
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
-        if not rate:
+        if rate == "None":
             rate = 1048576
         print rate
         if operation == "stop":

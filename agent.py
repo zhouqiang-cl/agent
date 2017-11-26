@@ -88,8 +88,9 @@ class NetworkHandler(tornado.web.RequestHandler):
         container_ip = self.get_argument("container_ip")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, dirname=dirname, 
+        cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
             container_ip=container_ip, operation=operation, rate=rate)
+        print cmd
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
 

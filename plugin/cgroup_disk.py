@@ -25,6 +25,8 @@ class DiskExecutor(models.executor.Executor):
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
+        if not rate:
+            rate = 1048576
         if operation == "stop":
             rate = 0
         cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"

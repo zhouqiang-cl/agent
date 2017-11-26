@@ -1,3 +1,4 @@
+from libs.misc import system
 class Sys(object):
     def get_block_number(self, block):
         "ls -lhrt"

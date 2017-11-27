@@ -1,5 +1,7 @@
 from libs.misc import system
 class Sys(object):
+    def __init__(self):
+        self._prefix = "/host"
     def get_block_number(self, block):
         # "ls -lhrt"
         cmd = "ls -lhrt {block}".format(block=block)
@@ -17,6 +19,18 @@ class Sys(object):
                 continue
             if line.split()[2] == mount:
                 return line.split()[0]
+
+    def get_block_by_mount_in_docker(self, mount):
+        cmd = "cat  {mount_dir}".format(mount_dir = self._prefix + "/proc/mounts")
+        mount = self._prefix + mount
+        rc,so,se = system(cmd)
+        for line in so.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            if line.split()[1] == mount:
+                return line.split()[0]
+
     def write_to_cgroup(self,value, cgoup_path):
         cmd = "echo '{data}' > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)
         print cmd
@@ -25,6 +39,6 @@ class Sys(object):
 sys = Sys()
 if __name__ == "__main__":
     # sys = Sys()
-    block = sys.get_block_by_mount("/data1")
+    block = sys.get_block_by_mount_in_docker("/mnt/disk2")
     print block
-    print sys.get_block_number(block)
+    # print sys.get_block_number(block)

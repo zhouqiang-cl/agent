@@ -32,6 +32,7 @@ class DiskExecutor(models.executor.Executor):
             rate = 0
         cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
         mount_dir = docker.get_mount_dir(container_id, dirname)
+        mount_dir = sys.get_link(mount_dir)
         block = sys.get_block_by_mount(mount_dir)
         block_num = sys.get_block_number(block)
         data = block_num + " " + str(rate)

@@ -113,6 +113,7 @@ class SupportApis(tornado.web.RequestHandler):
             "description":"network injection for docker",
             "args":{
                 "action":["delay","fail", "loss","limit","forbid"],
+                "container_id":"",
                 "container_ip":"",
                 "rate":"",
                 "operation":["start","stop","status"]
@@ -125,7 +126,6 @@ class SupportApis(tornado.web.RequestHandler):
 
 def make_app():
     return tornado.web.Application([
-        (r"/execute", AgentHandler),
         (r"/api/v1/disk", DiskHandler),
         (r"/api/v1/network", NetworkHandler),
         (r"/api/v1/supportapis", SupportApis)

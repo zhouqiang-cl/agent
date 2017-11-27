@@ -23,7 +23,7 @@ class Sys(object):
     def get_link(self, dirname):
         cmd = "readlink {dirname}".format(dirname = self._prefix + dirname)
         rc,so,se = system(cmd)
-        return so
+        return so.strip()
 
     def get_block_by_mount_in_docker(self, mount):
         cmd = "cat  {mount_dir}".format(mount_dir = self._prefix + "/proc/mounts")

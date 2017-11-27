@@ -4,7 +4,7 @@ class Sys(object):
         self._prefix = "/host"
     def get_block_number(self, block):
         # "ls -lhrt"
-        cmd = "ls -lhrt {block}".format(block=block)
+        cmd = "ls -lhrtL {block}".format(block=self._prefix + block)
         # print "start running command '{cmd}'".format(cmd=cmd)
         # "brw-rw----. 1 root disk 8, 16 Nov  6 11:57 /dev/sdb"
         rc,so,se = system(cmd)
@@ -40,5 +40,5 @@ sys = Sys()
 if __name__ == "__main__":
     # sys = Sys()
     block = sys.get_block_by_mount_in_docker("/mnt/disk2")
-    print block
-    # print sys.get_block_number(block)
+    # print block
+    print sys.get_block_number(block)

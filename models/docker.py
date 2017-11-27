@@ -4,7 +4,7 @@ from libs.misc import system
 class Docker(object):
     def __init__(self):
         self._ip_cmd = "ip"
-        self._cgroup_dir = "/sys/fs/cgroup/blkio"
+        self._cgroup_dir = "/mnt/sys/fs/cgroup/blkio"
 
     def get_netdev_for_ip(self, address):
         if not self._valid_ip(address):
@@ -53,7 +53,7 @@ class Docker(object):
         return None
 
     # def limit_disk(self, container_id, dirname, rate):
-        
+
 
 
      # kubectl get pods --namespace="dashboard-stable-test-zq"
@@ -72,7 +72,7 @@ class Docker(object):
 
     #in docker install iproute,iptables
     # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW centos bash
-
+    #docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /sys/fs/cgroup/blkio/kubepods/besteffort:/mnt/sys/fs/cgroup/blkio/kubepods/besteffort centos-test bash
 docker = Docker()
 if __name__ == "__main__":
     print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")

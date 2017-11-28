@@ -1,0 +1,1 @@
+docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /:/host -v $(which ip):/usr/bin/ip -v $(which tc):/usr/bin/tc centos-test bash

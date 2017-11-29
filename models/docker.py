@@ -52,34 +52,6 @@ class Docker(object):
                 return mount["Source"]
         return None
 
-    # def limit_disk(self, container_id, dirname, rate):
-
-
-
-     # kubectl get pods --namespace="dashboard-stable-test-zq"
-     # kubectl describe po tidb-cluster-tikv-phkkk --namespace="dashboard-stable-test-demo-zq"
-     # 172.16.10.58
-     # d4be9c340c5ff713541ab2061614b4234994e7e5438a316636df5c78c9152e1a
-
-     # /sys/fs/cgroup/blkio/kubepods/besteffort/podbca350d7-d194-11e7-9a1b-1866dafb1d34/b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c
-
-    #  docker inspect b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c can get pod 
-    #  io.kubernetes.pod.uid
-
-    # docker run -it --privileged=true -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7 centos bash
-    # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7 -v /sbin/iptables:/sbin/iptables -v /usr/lib64/libip4tc.so.0:/usr/lib64/libip4tc.so.0 -v /usr/lib64/libip6tc.so.0:/usr/lib64/libip6tc.so.0 -v /usr/lib64/libxtables.so.10:/usr/lib64/libxtables.so.10  --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW centos bash 
-
-
-    #in docker install iproute,iptables
-    # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW centos bash
-    #docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /sys/fs/cgroup/blkio/kubepods/besteffort:/mnt/sys/fs/cgroup/blkio/kubepods/besteffort centos-test bash
-    #/etc/mtab
-    #docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /sys/fs/cgroup/blkio/kubepods/besteffort:/mnt/sys/fs/cgroup/blkio/kubepods/besteffort -v /:/host centos-test bash
-    #curl "localhost:8888/api/v1/disk?action=limit&dirname=/var/lib/tidb&container_id=a077a1726fa6fd15be5fe677e708774ebe36c840a073d16ed6880e905add823a&operation=start"
-    # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /:/host centos-test bash
-    # ./plugin/network.py -a delay --container_ip 10.233.107.57 -r 1048576 start
-    #docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /:/host -v $(which ip):/usr/bin/ip -v $(which tc):/usr/bin/tc centos-test bash
-    # ./plugin/network.py -a delay --container_ip 10.233.107.57 -r 1048576 start
 docker = Docker()
 if __name__ == "__main__":
     print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")

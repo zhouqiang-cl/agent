@@ -16,7 +16,7 @@ class Runner(object):
         self._plugin_dir = "./plugin"
         self._running_queue = {}
         self._isolate = []
-        self._lock_dir = "./lock"
+        self._lock_dir = "./data"
     @tornado.concurrent.run_on_executor
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]

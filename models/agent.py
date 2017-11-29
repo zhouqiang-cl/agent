@@ -37,3 +37,5 @@ class Agent(object):
         if rc:
             raise ExecuteException(msg = so)
         return True
+
+agent = Agent()

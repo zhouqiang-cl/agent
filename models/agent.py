@@ -4,6 +4,7 @@ from iexceptions import ExecuteException
 class Agent(object):
     def __init__(self):
         self._agent_data_path = "./data"
+        self._prefix = "/host/tidb/"
 
     @staticmethod
     def get_mount_path(container_id):
@@ -24,8 +25,15 @@ class Agent(object):
 
     @staticmethod
     def unlink(dirname):
-        cmd = "unlink {dirname} && ln -s /mnt/noexist {dirname}".format(dirname=dirname)
+        cmd = "unlink {dirname} && ln -s /mnt/noexist {dirname}".format(dirname=self._prefix + dirname)
+        rc,so,se = system(cmd)
+        if rc:
+            raise ExecuteException(msg = so)
+        return True
 
     @staticmethod
     def relink(dirname, origin):
-        cmd = "unlink  {dirname} && ln -s {origin} {dirname}".format(dirname=dirname, origin=origin)
+        cmd = "unlink  {dirname} && ln -s {origin} {dirname}".format(dirname=self._prefix + dirname, origin=origin)
+        if rc:
+            raise ExecuteException(msg = so)
+        return True

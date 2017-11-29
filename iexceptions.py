@@ -29,4 +29,4 @@ class ContainerLockedException(Exception):
 
 class ExecuteException(Exception):
     def __init__(self, msg = None):
-        pass
+        self._msg = msg

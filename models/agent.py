@@ -30,16 +30,16 @@ class Agent(object):
         with open(path,"w") as f:
                 f.write(json.dumps(data))
 
-    @staticmethod
-    def unlink(dirname):
+    # @staticmethod
+    def unlink(self, dirname):
         cmd = "unlink {dirname} && ln -s /mnt/noexist {dirname}".format(dirname=self._prefix + dirname)
         rc,so,se = system(cmd)
         if rc:
             raise ExecuteException(msg = so)
         return True
 
-    @staticmethod
-    def relink(dirname, origin):
+    # @staticmethod
+    def relink(self, dirname, origin):
         cmd = "unlink  {dirname} && ln -s {origin} {dirname}".format(dirname=self._prefix + dirname, origin=origin)
         if rc:
             raise ExecuteException(msg = so)

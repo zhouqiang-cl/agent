@@ -58,6 +58,9 @@ class Runner(object):
         with open(lock_path, 'r') as f:
             lock_msg = f.read().strip()
         return lock_msg.strip()
+    def get_container_lock_msg(container_id):
+        lock_path = self._lock_dir + "/" + container_id + "/lock"
+        return self.get_lock_msg(lock_path)
     def delete_lock(self, container_id, lock_msg):
         """
             disk:operation:dirname
@@ -133,7 +136,7 @@ class NetworkHandler(tornado.web.RequestHandler):
                 result = yield self._runner.run_cmd(cmd)
                 self.finish(result)
             else:
-                lock_msg = self._runner.get_lock_msg(container_id).split(":")
+                lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
                 msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
                     job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
                 self.finish({"status":"failed","msg":msg})

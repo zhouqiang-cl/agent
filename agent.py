@@ -22,9 +22,9 @@ class Runner(object):
         plugin = cmd.split()[0]
         cmd = self._plugin_dir + "/" + cmd
         # print "run {cmd}".format(cmd=cmd)
-        print cmd
+        # print cmd
         rc,so,se = system(cmd)
-        print "output",rc,so,se
+        # print "output",rc,so,se
         if rc:
             raise ExecuteException(msg = so)
         return {"result":"success"}

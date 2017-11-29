@@ -7,7 +7,6 @@ class Executor(object):
         rc,so,se = system(cmd)
         if rc:
             raise ExecuteException(msg = se)
-        # print rc, so, se
         return rc
     @staticmethod
     def _clear_related_cmd(cmd):

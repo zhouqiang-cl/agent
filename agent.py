@@ -95,6 +95,7 @@ class DiskHandler(tornado.web.RequestHandler):
         rate = self.get_argument("rate",None)
         cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
             container_id=container_id, operation=operation, rate=rate)
+        print cmd
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "disk:" + action + ":" + dirname

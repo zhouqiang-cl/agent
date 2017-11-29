@@ -21,11 +21,11 @@ class Runner(object):
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
         cmd = self._plugin_dir + "/" + cmd
-        print "run {cmd}".format(cmd=cmd)
+        # print "run {cmd}".format(cmd=cmd)
         rc,so,se = system(cmd)
-        print "output",rc,so,se
+        # print "output",rc,so,se
         if not rc:
-            raise ExecuteException(msg = se)
+            raise ExecuteException(msg = "so:" + so + " se:" + se)
         # print "output",rc,so,se
         return {"result":True}
 

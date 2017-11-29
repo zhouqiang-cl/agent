@@ -5,7 +5,7 @@ from iexceptions import ExecuteException
 class Agent(object):
     def __init__(self):
         self._agent_data_path = "./data"
-        self._prefix = "/host/tidb/"
+        self._prefix = "/host"
 
     # @staticmethod
     def get_mount_dir(self, container_id):

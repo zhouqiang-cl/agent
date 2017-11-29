@@ -2,12 +2,6 @@
 import argparse
 import models.executor
 """
-Executor
-  NetworkExecutor
-  DiskExecutor
-  CpuExecutor
-  MemExecutor
-  ...
 """
 class NetworkExecutor(models.executor.Executor):
     """as network"""
@@ -28,9 +22,9 @@ class NetworkExecutor(models.executor.Executor):
             cmd = "{tc} qdisc replace dev {interface} root netem {action} 0{postfix}".format(tc=self._tc, interface=interface, action=action, postfix=postfix)
         #self._clear_related_cmd(cmd)
         self._execute_or_revert_cmd(cmd)
-        result = self._report_tc(interface)
-        print result
-        return result
+        # result = self._report_tc(interface)
+        # print result
+        return True
 
     def fail(self, operation, **kwargs):
         return self.common_runner("corrupt",operation,"%", **kwargs)

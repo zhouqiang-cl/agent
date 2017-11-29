@@ -97,7 +97,7 @@ class DiskHandler(tornado.web.RequestHandler):
             container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
-                msg = "disk:" + action + ":" + container_ip
+                msg = "disk:" + action + ":" + dirname
                 try:
                     result = yield self._runner.run_cmd(cmd)
                     self._runner.require_lock(container_id, msg )
@@ -110,7 +110,7 @@ class DiskHandler(tornado.web.RequestHandler):
                     job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
                 self.finish({"status":"failed","msg":msg})
         elif operation == "stop":
-            msg = "disk:" + action + ":" + container_ip
+            msg = "disk:" + action + ":" + dirname
             result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
             self.finish(result)

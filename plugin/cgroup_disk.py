@@ -31,7 +31,7 @@ class DiskExecutor(models.executor.Executor):
         if not dirname:
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
-        rate = 0
+        rate = 1
         # if rate == "None":
         #     rate = 1048576
         # if operation == "stop":

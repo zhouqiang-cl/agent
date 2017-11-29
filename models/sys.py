@@ -36,8 +36,6 @@ class Sys(object):
     def write_to_cgroup(self,value, cgoup_path):
         cmd = "echo '{data}' > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)
         rc,so,se = system(cmd)
-        print "so", so
-        print "se", se
         if rc:
             raise ExecuteException(msg = so)
         return True

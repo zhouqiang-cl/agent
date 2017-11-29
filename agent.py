@@ -58,7 +58,8 @@ class Runner(object):
         with open(lock_path, 'r') as f:
             lock_msg = f.read().strip()
         return lock_msg.strip()
-    def get_container_lock_msg(container_id):
+        
+    def get_container_lock_msg(self, container_id):
         lock_path = self._lock_dir + "/" + container_id + "/lock"
         return self.get_lock_msg(lock_path)
     def delete_lock(self, container_id, lock_msg):

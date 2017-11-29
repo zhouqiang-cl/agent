@@ -7,8 +7,8 @@ import tornado.web
 import tornado.concurrent
 import tornado.gen
 
-from libs.misc import system
-from iexceptions import PluginNotExistsException,PluginSingletonException,CommandInvalidateException
+from libs.misc import system,mkdirs
+from iexceptions import PluginNotExistsException,PluginSingletonException,CommandInvalidateException,ContainerLockedException
 
 class Runner(object):
     executor = ThreadPoolExecutor(max_workers=24)
@@ -16,6 +16,7 @@ class Runner(object):
         self._plugin_dir = "./plugin"
         self._running_queue = {}
         self._isolate = []
+        self._lock_dir = "./lock"
     @tornado.concurrent.run_on_executor
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
@@ -31,6 +32,35 @@ class Runner(object):
             rc,so,se = system(cmd)
             print "output",rc,so,se
         return {"result":True}
+
+    def require_lock(self, container_id, lock_msg):
+        lock_dir = self._lock_dir + "/" + container_id
+        mkdirs(lock_dir)
+        lock_path = self._lock_dir + "/" + container_id + "/lock"
+        if os.path.exists(lock_path):
+            with open(lock_path, 'r') as f:
+                lock_msg = f.read().strip()
+            raise ContainerLockedException(container_id=container_id, lock_msg=lock_msg)
+        with open(lock_path, 'w') as f:
+            f.write(lock_msg)
+        return True
+
+    @staticmethod
+    def get_lock_msg(lock_path):
+        with open(lock_path, 'r') as f:
+            lock_msg = f.read().strip()
+        return lock_msg.strip()
+    def delete_lock(self, container_id, lock_msg):
+        """
+            disk:operation:dirname
+            network:operation:ip
+        """ 
+        lock_path = self._lock_dir + "/" + container_id + "/lock"
+        origin_lock_msg = self.get_lock_msg(lock_path)
+        if origin_lock_msg != lock_msg:
+            raise DeleteLockMsgIllegalException(lock_msg=lock_msg, origin_lock_msg= origin_lock_msg)
+        os.remove(lock_path)
+
 
     def singleton_running(self,plugin):
         if plugin in self._running_queue and self._running_queue[plugin] > 0:
@@ -53,15 +83,6 @@ class Runner(object):
         return True
 
 runner = Runner()
-class AgentHandler(tornado.web.RequestHandler):
-    def prepare(self):
-        self._runner = runner
-    @tornado.gen.coroutine
-    def get(self):
-        cmd = self.get_argument("cmd")
-        result = yield self._runner.run_cmd(cmd)
-        # print result
-        self.finish(result)
 
 class DiskHandler(tornado.web.RequestHandler):
     def prepare(self):

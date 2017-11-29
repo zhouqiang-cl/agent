@@ -23,3 +23,6 @@ class RunCommandException(Exception):
 class NotCaliDevException(Exception):
     def __init__(self, dev=None):
         pass
+class ContainerLockedException(Exception):
+    def __init__(self, container_id=None, lock_msg=None):
+        pass

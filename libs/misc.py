@@ -11,3 +11,7 @@ def system(cmd):
     std_out, std_err = process.communicate()
     return_code = process.poll()
     return return_code, std_out, std_err
+
+def mkdirs(dirname):
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)

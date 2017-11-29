@@ -4,6 +4,7 @@ import models.executor
 from models.docker import docker
 from models.sys import sys
 from models.agent import agent
+from iexceptions import ExecuteException
 
 class DiskExecutor(models.executor.Executor):
     def __init__(self):

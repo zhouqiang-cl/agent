@@ -22,6 +22,7 @@ class Runner(object):
         plugin = cmd.split()[0]
         cmd = self._plugin_dir + "/" + cmd
         # print "run {cmd}".format(cmd=cmd)
+        print cmd
         rc,so,se = system(cmd)
         # print "output",rc,so,se
         if not rc:
@@ -131,7 +132,9 @@ class NetworkHandler(tornado.web.RequestHandler):
             if self._runner.check_lock(container_id):                
                 msg = "network:" + action + ":" + container_ip
                 try:
+                    print 11
                     result = yield self._runner.run_cmd(cmd)
+                    print 22
                     self._runner.require_lock(container_id, msg )
                     self.finish(result)
                 except ExecuteException as e:

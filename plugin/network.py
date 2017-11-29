@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import models.executor
+from iexception import ExecuteException
 """
 """
 class NetworkExecutor(models.executor.Executor):
@@ -21,7 +22,10 @@ class NetworkExecutor(models.executor.Executor):
             #cmd = "{tc} qdisc del dev {interface} root netem corrupt {rate}%".format(tc=self.tc, interface=interface, rate=rate)
             cmd = "{tc} qdisc replace dev {interface} root netem {action} 0{postfix}".format(tc=self._tc, interface=interface, action=action, postfix=postfix)
         #self._clear_related_cmd(cmd)
-        self._execute_or_revert_cmd(cmd)
+        try:
+            self._execute_or_revert_cmd(cmd)
+        except ExecuteException as e:
+            raise e
         # result = self._report_tc(interface)
         # print result
         return True
@@ -78,4 +82,5 @@ if __name__ == "__main__":
     if args.container_ip:
         from models.docker import docker
         interface = docker.get_netdev_for_ip(args.container_ip)
-    getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)
+    ret = getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)
+    print ret

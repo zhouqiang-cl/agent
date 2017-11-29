@@ -3,11 +3,10 @@ from libs.misc import system
 class Executor(object):
     @staticmethod
     def _execute_or_revert_cmd(cmd):
-        # print "start running command '{cmd}'".format(cmd=cmd)
+        #print "start running command '{cmd}'".format(cmd=cmd)
         rc,so,se = system(cmd)
-        print rc, se, so
-        if not rc:
-            raise ExecuteException(msg = so)
+        if rc:
+            raise ExecuteException(msg = se)
         # print rc, so, se
         return rc
     @staticmethod

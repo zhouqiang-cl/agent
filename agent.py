@@ -33,6 +33,14 @@ class Runner(object):
             print "output",rc,so,se
         return {"result":True}
 
+    def check_lock(self, container_id):
+        lock_dir = self._lock_dir + "/" + container_id
+        mkdirs(lock_dir)
+        lock_path = self._lock_dir + "/" + container_id + "/lock"
+        if os.path.exists(lock_path):
+            return False
+        return True
+
     def require_lock(self, container_id, lock_msg):
         lock_dir = self._lock_dir + "/" + container_id
         mkdirs(lock_dir)
@@ -119,13 +127,18 @@ class NetworkHandler(tornado.web.RequestHandler):
         cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
             container_ip=container_ip, operation=operation, rate=rate)
         if operation == "start":
-            msg = "network:" + container_id + ":" + container_ip
-            self._runner.require_lock(container_id, msg )
+            if self._runner.check_lock(container_id):                
+                msg = "network:" + container_id + ":" + container_ip
+                self._runner.require_lock(container_id, msg )
+                result = yield self._runner.run_cmd(cmd)
+                self.finish(result)
+            else:
+                self.finish({"failed":"failed"})
         elif operation == "stop":
             msg = "network:" + container_id + ":" + container_ip
+            result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
-        result = yield self._runner.run_cmd(cmd)
-        self.finish(result)
+            self.finish(result)
 
 class SupportApis(tornado.web.RequestHandler):
     def get(self):

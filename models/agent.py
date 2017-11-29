@@ -1,5 +1,5 @@
 import json
-from libs.misc import system
+from libs.misc import system,mkdirs
 from iexceptions import ExecuteException
 class Agent(object):
     def __init__(self):
@@ -8,20 +8,26 @@ class Agent(object):
 
     # @staticmethod
     def get_mount_path(self, container_id):
-        path = self._agent_data_path + "/" + container_id + "/mount"
+        path = self._agent_data_path + "/" + container_id
         return path
 
     def get_link(self, container_id, mount_dir):
-        path = self.get_mount_path(container_id)
+        path = self.get_mount_dir(container_id) + "/mount" 
         with open(path,"r") as f:
             data = json.loads(f.read())
         return data[mount_dir]
 
     def set_link(self, container_id, mount_dir, mount_block):
-        path = self.get_mount_path(container_id)
-        with open(path,"r") as f:
-            data = json.loads(f.read())
+        dirname = self.get_mount_dir(container_id)
+        mkdirs(dirname)
+        path = dirname + "/mount"
+        data = {}
+        if os.path.exists(path):
+            with open(path,"r") as f:
+                data = json.loads(f.read())
         data[mount_dir] = mount_block
+        with open(path,"w") as f:
+                f.write(json.dumps(data))
 
     @staticmethod
     def unlink(dirname):

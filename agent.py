@@ -8,7 +8,7 @@ import tornado.concurrent
 import tornado.gen
 
 from libs.misc import system,mkdirs
-from iexceptions import PluginNotExistsException,PluginSingletonException,CommandInvalidateException,ContainerLockedException
+from iexceptions import PluginNotExistsException,PluginSingletonException,CommandInvalidateException,ContainerLockedException,ExecuteException
 
 class Runner(object):
     executor = ThreadPoolExecutor(max_workers=24)
@@ -21,19 +21,15 @@ class Runner(object):
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
         cmd = self._plugin_dir + "/" + cmd
-        if plugin in self._isolate:
-            self._running_queue[plugin] += 1
-            print "run {cmd}".format(cmd=cmd)
-            rc,so,se = system(cmd)
-            print "output",rc,so,se
-            self._running_queue[plugin] -= 1
-        else:
-            print "run {cmd}".format(cmd=cmd)
-            rc,so,se = system(cmd)
-            print "output",rc,so,se
+        print "run {cmd}".format(cmd=cmd)
+        rc,so,se = system(cmd)
+        if not rc:
+            raise ExecuteException(msg = se)
+        print "output",rc,so,se
         return {"result":True}
 
     def check_lock(self, container_id):
+        return True
         lock_dir = self._lock_dir + "/" + container_id
         mkdirs(lock_dir)
         lock_path = self._lock_dir + "/" + container_id + "/lock"
@@ -58,7 +54,7 @@ class Runner(object):
         with open(lock_path, 'r') as f:
             lock_msg = f.read().strip()
         return lock_msg.strip()
-        
+
     def get_container_lock_msg(self, container_id):
         lock_path = self._lock_dir + "/" + container_id + "/lock"
         return self.get_lock_msg(lock_path)
@@ -74,11 +70,6 @@ class Runner(object):
         os.remove(lock_path)
 
 
-    def singleton_running(self,plugin):
-        if plugin in self._running_queue and self._running_queue[plugin] > 0:
-            return False
-        return True
-
     @tornado.gen.coroutine
     def run_cmd(self, cmd, **kwargs):
         if not self._check_valid(cmd):
@@ -86,8 +77,6 @@ class Runner(object):
         plugin = cmd.split()[0]
         if not os.path.exists(self._plugin_dir + "/" + plugin):
             raise PluginNotExistsException(plugin_name = plugin)
-        if not self.singleton_running(plugin):
-            raise PluginSingletonException(plugin_name = plugin)
         result = yield self._async_execute(cmd)
         raise tornado.gen.Return(result)
 
@@ -110,13 +99,21 @@ class DiskHandler(tornado.web.RequestHandler):
         cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
             container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
-            msg = "disk:" + action + ":" + dirname
-            self._runner.require_lock(container_id, msg )
+            if self._runner.check_lock(container_id):                
+                msg = "disk:" + action + ":" + container_ip
+                self._runner.require_lock(container_id, msg )
+                result = yield self._runner.run_cmd(cmd)
+                self.finish(result)
+            else:
+                lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
+                msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
+                    job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
+                self.finish({"status":"failed","msg":msg})
         elif operation == "stop":
-            msg = "disk:" + action + ":" + dirname
+            msg = "disk:" + action + ":" + container_ip
+            result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
-        result = yield self._runner.run_cmd(cmd)
-        self.finish(result)
+            self.finish(result)
 
 class NetworkHandler(tornado.web.RequestHandler):
     def prepare(self):

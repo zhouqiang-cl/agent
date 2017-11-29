@@ -26,3 +26,7 @@ class NotCaliDevException(Exception):
 class ContainerLockedException(Exception):
     def __init__(self, container_id=None, lock_msg=None):
         pass
+
+class ExecuteException(Exception):
+    def __init__(self, msg = None):
+        pass

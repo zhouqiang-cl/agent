@@ -17,6 +17,7 @@ class DiskExecutor(models.executor.Executor):
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         mount_dir = docker.get_mount_dir(container_id, dirname)
+        print mount_dir
         link = sys.get_link(mount_dir)
         if operation == "start":
             agent.set_link(container_id, mount_dir, link)

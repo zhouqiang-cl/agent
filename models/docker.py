@@ -21,16 +21,16 @@ class Docker(object):
     def _valid_ip(ip):
         return True
 
-    @staticmethod
-    def get_mount_dir(dirname):
-        """docker inspect 7628d0ca4572"""
-        cmd = "readlink -f {dirname}".format(dirname = dirname)
-        rc, so  ,se  = system(cmd)
-        dirname = so
-        if not so.startswith("/data"):
-            raise UnsupportDirException(dirname=dirname)
-        block_mount_dir = "/" + so.split("/")[1]
-        return block_mount_dir
+    # @staticmethod
+    # def get_mount_dir(dirname):
+    #     """docker inspect 7628d0ca4572"""
+    #     cmd = "readlink -f {dirname}".format(dirname = dirname)
+    #     rc, so  ,se  = system(cmd)
+    #     dirname = so
+    #     if not so.startswith("/data"):
+    #         raise UnsupportDirException(dirname=dirname)
+    #     block_mount_dir = "/" + so.split("/")[1]
+    #     return block_mount_dir
 
 
     def get_cgroup_path(self, container_id):

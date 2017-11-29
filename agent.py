@@ -24,8 +24,8 @@ class Runner(object):
         # print "run {cmd}".format(cmd=cmd)
         print cmd
         rc,so,se = system(cmd)
-        # print "output",rc,so,se
-        if not rc:
+        print "output",rc,so,se
+        if rc:
             raise ExecuteException(msg = so)
         return {"result":"success"}
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import models.executor
-from iexception import ExecuteException
+from iexceptions import ExecuteException
 """
 """
 class NetworkExecutor(models.executor.Executor):
@@ -26,8 +26,6 @@ class NetworkExecutor(models.executor.Executor):
             self._execute_or_revert_cmd(cmd)
         except ExecuteException as e:
             raise e
-        # result = self._report_tc(interface)
-        # print result
         return True
 
     def fail(self, operation, **kwargs):
@@ -82,5 +80,7 @@ if __name__ == "__main__":
     if args.container_ip:
         from models.docker import docker
         interface = docker.get_netdev_for_ip(args.container_ip)
-    ret = getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)
-    print ret
+    try:
+        getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)
+    except ExecuteException as e:
+        print e._msg

@@ -19,10 +19,10 @@ class DiskExecutor(models.executor.Executor):
         mount_dir = docker.get_mount_dir(container_id, dirname)
         # print mount_dir
         link = sys.get_link(mount_dir)
-        print "mount:", mount_dir, "link:", link
+        # print "mount:", mount_dir, "link:", link
         if operation == "start":
             agent.set_link(container_id, mount_dir, link)
-            agent.unlink(dirname)
+            agent.unlink(mount_dir)
             # unlink  tikv-dir-4 && ln -s /mnt/noexist tikv-dir-4
         else:
             origin = agent.get_link(container_id, mount_dir)

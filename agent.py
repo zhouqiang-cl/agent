@@ -106,10 +106,10 @@ class DiskHandler(tornado.web.RequestHandler):
         cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
             container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
-            msg = "disk:" + container_id + ":" + dirname
+            msg = "disk:" + operation + ":" + dirname
             self._runner.require_lock(container_id, msg )
         elif operation == "stop":
-            msg = "disk:" + container_id + ":" + dirname
+            msg = "disk:" + operation + ":" + dirname
             self._runner.delete_lock(container_id, msg )
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
@@ -128,14 +128,17 @@ class NetworkHandler(tornado.web.RequestHandler):
             container_ip=container_ip, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
-                msg = "network:" + container_id + ":" + container_ip
+                msg = "network:" + operation + ":" + container_ip
                 self._runner.require_lock(container_id, msg )
                 result = yield self._runner.run_cmd(cmd)
                 self.finish(result)
             else:
-                self.finish({"failed":"failed"})
+                lock_msg = self._runner.get_lock_msg(container_id).split(":")
+                msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
+                    job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
+                self.finish({"status":"failed","msg":msg})
         elif operation == "stop":
-            msg = "network:" + container_id + ":" + container_ip
+            msg = "network:" + operation + ":" + container_ip
             result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
             self.finish(result)

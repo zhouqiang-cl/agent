@@ -113,6 +113,7 @@ class NetworkHandler(tornado.web.RequestHandler):
     def get(self):
         action = self.get_argument("action")
         container_ip = self.get_argument("container_ip")
+        container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
         cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 

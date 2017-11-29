@@ -131,9 +131,13 @@ class NetworkHandler(tornado.web.RequestHandler):
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "network:" + action + ":" + container_ip
-                # self._runner.require_lock(container_id, msg )
-                result = yield self._runner.run_cmd(cmd)
-                self.finish(result)
+                try:
+                    # self._runner.require_lock(container_id, msg )
+                    result = yield self._runner.run_cmd(cmd)
+                    # self._runner.require_lock(container_id, msg )
+                    self.finish(result)
+                except ExecuteException as e:
+                    self.finish(e._msg)
             else:
                 lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
                 msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(

@@ -30,4 +30,4 @@ class ContainerLockedException(Exception):
 class ExecuteException(Exception):
     def __init__(self, msg = None):
         self._msg = msg
-        print "msg:", msg
+        # print "msg:", msg

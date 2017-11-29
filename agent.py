@@ -25,7 +25,7 @@ class Runner(object):
         rc,so,se = system(cmd)
         # print "output",rc,so,se
         if not rc:
-            raise ExecuteException(msg = "so:" + so + " se:" + se)
+            raise ExecuteException(msg = so)
         return {"result":"success"}
 
     def check_lock(self, container_id):

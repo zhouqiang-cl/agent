@@ -7,7 +7,7 @@ class Agent(object):
         self._prefix = "/host/tidb/"
 
     # @staticmethod
-    def get_mount_path(self, container_id):
+    def get_mount_dir(self, container_id):
         path = self._agent_data_path + "/" + container_id
         return path
 

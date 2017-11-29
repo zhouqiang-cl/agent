@@ -26,11 +26,10 @@ class Runner(object):
         # print "output",rc,so,se
         if not rc:
             raise ExecuteException(msg = "so:" + so + " se:" + se)
-        # print "output",rc,so,se
-        return {"result":True}
+        return {"result":"success"}
 
     def check_lock(self, container_id):
-        return True
+        # return True
         lock_dir = self._lock_dir + "/" + container_id
         mkdirs(lock_dir)
         lock_path = self._lock_dir + "/" + container_id + "/lock"
@@ -132,12 +131,11 @@ class NetworkHandler(tornado.web.RequestHandler):
             if self._runner.check_lock(container_id):                
                 msg = "network:" + action + ":" + container_ip
                 try:
-                    # self._runner.require_lock(container_id, msg )
                     result = yield self._runner.run_cmd(cmd)
-                    # self._runner.require_lock(container_id, msg )
+                    self._runner.require_lock(container_id, msg )
                     self.finish(result)
                 except ExecuteException as e:
-                    self.finish(e._msg)
+                    self.finish({"status":"failed","msg":e._msg})
             else:
                 lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
                 msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(

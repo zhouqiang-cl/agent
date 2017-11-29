@@ -23,9 +23,10 @@ class Runner(object):
         cmd = self._plugin_dir + "/" + cmd
         print "run {cmd}".format(cmd=cmd)
         rc,so,se = system(cmd)
+        print "output",rc,so,se
         if not rc:
             raise ExecuteException(msg = se)
-        print "output",rc,so,se
+        # print "output",rc,so,se
         return {"result":True}
 
     def check_lock(self, container_id):

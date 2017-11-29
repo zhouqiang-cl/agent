@@ -101,7 +101,7 @@ class DiskHandler(tornado.web.RequestHandler):
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "disk:" + action + ":" + container_ip
-                self._runner.require_lock(container_id, msg )
+                # self._runner.require_lock(container_id, msg )
                 result = yield self._runner.run_cmd(cmd)
                 self.finish(result)
             else:

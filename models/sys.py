@@ -1,14 +1,11 @@
 from libs.misc import system
+from iexceptions import ExecuteException
 class Sys(object):
     def __init__(self):
         self._prefix = "/host"
     def get_block_number(self, block):
-        # "ls -lhrt"
         cmd = "ls -lhrtL {block}".format(block=self._prefix + block)
-        # print "start running command '{cmd}'".format(cmd=cmd)
-        # "brw-rw----. 1 root disk 8, 16 Nov  6 11:57 /dev/sdb"
         rc,so,se = system(cmd)
-        # print rc, so, se
         return "".join(so.split()[4:6]).replace(",",":")
     def get_block_by_mount(self, mount):
         cmd = "mount"
@@ -38,9 +35,12 @@ class Sys(object):
 
     def write_to_cgroup(self,value, cgoup_path):
         cmd = "echo '{data}' > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)
-        print cmd
         rc,so,se = system(cmd)
-        print rc, so, se
+        print "so", so
+        print "se", se
+        if rc:
+            raise ExecuteException(msg = so)
+        return True
 sys = Sys()
 if __name__ == "__main__":
     # sys = Sys()

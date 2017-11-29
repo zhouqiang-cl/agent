@@ -97,6 +97,12 @@ class DiskHandler(tornado.web.RequestHandler):
         rate = self.get_argument("rate",None)
         cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
             container_id=container_id, operation=operation, rate=rate)
+        if operation == "start":
+            msg = "disk:" + container_id + ":" + dirname
+            self._runner.require_lock(container_id, msg )
+        elif operation == "stop":
+            msg = "disk:" + container_id + ":" + dirname
+            self._runner.delete_lock(container_id, msg )
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
 
@@ -111,7 +117,12 @@ class NetworkHandler(tornado.web.RequestHandler):
         rate = self.get_argument("rate",None)
         cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
             container_ip=container_ip, operation=operation, rate=rate)
-        print cmd
+        if operation == "start":
+            msg = "network:" + container_id + ":" + container_ip
+            self._runner.require_lock(container_id, msg )
+        elif operation == "stop":
+            msg = "network:" + container_id + ":" + container_ip
+            self._runner.delete_lock(container_id, msg )
         result = yield self._runner.run_cmd(cmd)
         self.finish(result)
 

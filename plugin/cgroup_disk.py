@@ -31,19 +31,19 @@ class DiskExecutor(models.executor.Executor):
         if not dirname:
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
-        rate = 1
+        rate = 0
         # if rate == "None":
         #     rate = 1048576
         # if operation == "stop":
         #     rate = 0
-        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_bps_device"
+        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_iops_device"
         mount_dir = docker.get_mount_dir(container_id, dirname)
         mount_dir = sys.get_link(mount_dir)
         block = sys.get_block_by_mount_in_docker(mount_dir)
         block_num = sys.get_block_number(block)
         data = block_num + " " + str(rate)
         sys.write_to_cgroup(data, cgroup_path)
-        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_bps_device"
+        cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.write_iops_device"
         sys.write_to_cgroup(data, cgroup_path)
             
 

@@ -21,16 +21,12 @@ class Runner(object):
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
         cmd = self._plugin_dir + "/" + cmd
-        # print "run {cmd}".format(cmd=cmd)
-        # print cmd
         rc,so,se = system(cmd)
-        # print "output",rc,so,se
         if rc:
             raise ExecuteException(msg = so)
         return {"result":"success"}
 
     def check_lock(self, container_id):
-        # return True
         lock_dir = self._lock_dir + "/" + container_id
         mkdirs(lock_dir)
         lock_path = self._lock_dir + "/" + container_id + "/lock"

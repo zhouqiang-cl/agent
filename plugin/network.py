@@ -84,3 +84,4 @@ if __name__ == "__main__":
         getattr(executor, args.action)(args.operation,interface=interface,rate=args.rate,src=args.src)
     except ExecuteException as e:
         print e._msg
+        exit(1)

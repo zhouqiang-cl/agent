@@ -79,6 +79,7 @@ class Docker(object):
     # docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /:/host centos-test bash
     # ./plugin/network.py -a delay --container_ip 10.233.107.57 -r 1048576 start
     #docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock  -v $(which docker):/usr/bin/docker -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7   --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW -p 8888:8888  -v /:/host -v $(which ip):/usr/bin/ip -v $(which tc):/usr/bin/tc centos-test bash
+    # ./plugin/network.py -a delay --container_ip 10.233.107.57 -r 1048576 start
 docker = Docker()
 if __name__ == "__main__":
     print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")

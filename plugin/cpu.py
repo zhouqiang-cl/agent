@@ -19,6 +19,7 @@ class CpuExecutor(models.executor.Executor):
         if operation == "stop":
             rate = -1
         cgroup_path = docker.get_cpu_cgroup_path(container_id) + "/" + "cpu.cfs_quota_us"
+        data = rate
         if data != -1:
             data = int(rate)*1000
         sys.write_to_cgroup(data, cgroup_path)

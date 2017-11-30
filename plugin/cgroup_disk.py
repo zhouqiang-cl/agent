@@ -10,32 +10,27 @@ class DiskExecutor(models.executor.Executor):
     def __init__(self):
         pass
 
+    def full(self, operation, **kwargs):
+        """
+            this will take much time
+            dd if=/dev/zero of=/mnt/disk6/tst.img bs=4M count=27K
+        """
+        # pass
+        dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
+        if not dirname:
+            return
+        mount_dir = docker.get_mount_dir(container_id, dirname)
+        mount_dir = sys.get_link(mount_dir)
+        agent.set_full(mount_dir)
+
+
     def fail(self, operation, **kwargs):
-        """umount"""
-        # dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
-        # if not dirname:
-        #     return
-        # container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
-        # mount_dir = docker.get_mount_dir(container_id, dirname)
-        # # print mount_dir
-        # link = sys.get_link(mount_dir)
-        # # print "mount:", mount_dir, "link:", link
-        # if operation == "start":
-        #     agent.set_link(container_id, mount_dir, link)
-        #     agent.unlink(mount_dir)
-        #     # unlink  tikv-dir-4 && ln -s /mnt/noexist tikv-dir-4
-        # else:
-        #     origin = agent.get_link(container_id, mount_dir)
-        #     sys.relink(mount_dir, origin)
+        """disk use limit iops for failed, in the future , we will use debugfs to simulation"""
         dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not dirname:
             return
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = 1
-        # if rate == "None":
-        #     rate = 1048576
-        # if operation == "stop":
-        #     rate = 0
         cgroup_path = docker.get_cgroup_path(container_id) + "/" + "blkio.throttle.read_iops_device"
         mount_dir = docker.get_mount_dir(container_id, dirname)
         mount_dir = sys.get_link(mount_dir)

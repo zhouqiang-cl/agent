@@ -4,7 +4,9 @@ from libs.misc import system
 class Docker(object):
     def __init__(self):
         self._ip_cmd = "ip"
-        self._cgroup_dir = "/host/sys/fs/cgroup/blkio"
+        self._cgroup_blkio_dir = "/host/sys/fs/cgroup/blkio"
+        self._cgroup_cpu_dir = "/host/sys/fs/cgroup/cpu"
+        self._cgroup_mem_dir = "/host/sys/fs/cgroup/memory"
 
     def get_netdev_for_ip(self, address):
         if not self._valid_ip(address):
@@ -21,25 +23,27 @@ class Docker(object):
     def _valid_ip(ip):
         return True
 
-    # @staticmethod
-    # def get_mount_dir(dirname):
-    #     """docker inspect 7628d0ca4572"""
-    #     cmd = "readlink -f {dirname}".format(dirname = dirname)
-    #     rc, so  ,se  = system(cmd)
-    #     dirname = so
-    #     if not so.startswith("/data"):
-    #         raise UnsupportDirException(dirname=dirname)
-    #     block_mount_dir = "/" + so.split("/")[1]
-    #     return block_mount_dir
-
-
     def get_cgroup_path(self, container_id):
         """docker inspect 7628d0ca4572"""
         # return yaml[0]["State"]["Pid"]
         cmd = "docker inspect {container_id}".format(container_id=container_id)
         rc,so,se = system(cmd)
         so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
-        dirname = self._cgroup_dir + so + "/" + container_id
+        dirname = self._cgroup_blkio_dir + so + "/" + container_id
+        return dirname
+
+    def get_cpu_cgroup_path(self, container_id):
+        cmd = "docker inspect {container_id}".format(container_id=container_id)
+        rc,so,se = system(cmd)
+        so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
+        dirname = self._cgroup_cpu_dir + so + "/" + container_id
+        return dirname
+
+    def get_mem_cgroup_path(self, container_id):
+        cmd = "docker inspect {container_id}".format(container_id=container_id)
+        rc,so,se = system(cmd)
+        so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
+        dirname = self._cgroup_mem_dir + so + "/" + container_id
         return dirname
 
     def get_mount_dir(self, container_id,dirname):

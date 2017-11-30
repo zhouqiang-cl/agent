@@ -4,7 +4,7 @@ import models.executor
 from models.docker import docker
 from models.sys import sys
 from models.agent import agent
-from iexceptions import ExecuteException
+from iexceptions import ExecuteException,CheckException
 
 class CpuExecutor(models.executor.Executor):
     def __init__(self):
@@ -13,7 +13,9 @@ class CpuExecutor(models.executor.Executor):
 
     def limit(self, operation, **kwargs):
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
-        rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
+        rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else -1
+        if rate > 100:
+            raise CheckException(msg = "rate shold not bigger then 100")
         if rate == "None":
             rate = -1
         if operation == "stop":
@@ -60,5 +62,8 @@ if __name__ == "__main__":
             rate=args.rate,
             container_id=args.containerid)
     except ExecuteException as e:
+        print e._msg
+        exit(1)
+    except CheckException as e:
         print e._msg
         exit(1)

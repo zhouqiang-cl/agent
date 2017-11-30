@@ -158,7 +158,7 @@ class CpuHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "cpu.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
+        cmd = "cpu.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
             container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
@@ -189,7 +189,7 @@ class MemoryHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "mem.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
+        cmd = "mem.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
             container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                

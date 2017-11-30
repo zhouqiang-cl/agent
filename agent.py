@@ -154,15 +154,15 @@ class CpuHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
         action = self.get_argument("action")
-        container_ip = self.get_argument("container_ip")
+        # container_ip = self.get_argument("container_ip")
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
         cmd = "cpu.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
-            container_ip=container_ip, operation=operation, rate=rate)
+            container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
-                msg = "network:" + action + ":" + container_ip
+                msg = "network:" + action + ":noop"
                 try:
                     result = yield self._runner.run_cmd(cmd)
                     self._runner.require_lock(container_id, msg )
@@ -175,7 +175,7 @@ class CpuHandler(tornado.web.RequestHandler):
                     job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
                 self.finish({"status":"failed","msg":msg})
         elif operation == "stop":
-            msg = "network:" + action + ":" + container_ip
+            msg = "network:" + action + ":noop"
             result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
             self.finish(result)
@@ -190,10 +190,10 @@ class MemoryHandler(tornado.web.RequestHandler):
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
         cmd = "mem.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
-            container_ip=container_ip, operation=operation, rate=rate)
+            container_id=container_id, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
-                msg = "network:" + action + ":" + container_ip
+                msg = "memory:" + action + ":noop"
                 try:
                     result = yield self._runner.run_cmd(cmd)
                     self._runner.require_lock(container_id, msg )
@@ -206,7 +206,7 @@ class MemoryHandler(tornado.web.RequestHandler):
                     job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
                 self.finish({"status":"failed","msg":msg})
         elif operation == "stop":
-            msg = "network:" + action + ":" + container_ip
+            msg = "memory:" + action + ":noop"
             result = yield self._runner.run_cmd(cmd)
             self._runner.delete_lock(container_id, msg )
             self.finish(result)

@@ -148,6 +148,69 @@ class NetworkHandler(tornado.web.RequestHandler):
             self._runner.delete_lock(container_id, msg )
             self.finish(result)
 
+class CpuHandler(tornado.web.RequestHandler):
+    def prepare(self):
+        self._runner = runner
+    @tornado.gen.coroutine
+    def get(self):
+        action = self.get_argument("action")
+        container_ip = self.get_argument("container_ip")
+        container_id = self.get_argument("container_id")
+        operation = self.get_argument("operation")
+        rate = self.get_argument("rate",None)
+        cmd = "cpu.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
+            container_ip=container_ip, operation=operation, rate=rate)
+        if operation == "start":
+            if self._runner.check_lock(container_id):                
+                msg = "network:" + action + ":" + container_ip
+                try:
+                    result = yield self._runner.run_cmd(cmd)
+                    self._runner.require_lock(container_id, msg )
+                    self.finish(result)
+                except ExecuteException as e:
+                    self.finish({"status":"failed","msg":e._msg})
+            else:
+                lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
+                msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
+                    job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
+                self.finish({"status":"failed","msg":msg})
+        elif operation == "stop":
+            msg = "network:" + action + ":" + container_ip
+            result = yield self._runner.run_cmd(cmd)
+            self._runner.delete_lock(container_id, msg )
+            self.finish(result)
+class MemoryHandler(tornado.web.RequestHandler):
+    def prepare(self):
+        self._runner = runner
+    @tornado.gen.coroutine
+    def get(self):
+        action = self.get_argument("action")
+        # container_ip = self.get_argument("container_ip")
+        container_id = self.get_argument("container_id")
+        operation = self.get_argument("operation")
+        rate = self.get_argument("rate",None)
+        cmd = "mem.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
+            container_ip=container_ip, operation=operation, rate=rate)
+        if operation == "start":
+            if self._runner.check_lock(container_id):                
+                msg = "network:" + action + ":" + container_ip
+                try:
+                    result = yield self._runner.run_cmd(cmd)
+                    self._runner.require_lock(container_id, msg )
+                    self.finish(result)
+                except ExecuteException as e:
+                    self.finish({"status":"failed","msg":e._msg})
+            else:
+                lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
+                msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
+                    job_type = lock_msg[0], container_id=container_id, operation=lock_msg[1], add_msg = lock_msg[2]) 
+                self.finish({"status":"failed","msg":msg})
+        elif operation == "stop":
+            msg = "network:" + action + ":" + container_ip
+            result = yield self._runner.run_cmd(cmd)
+            self._runner.delete_lock(container_id, msg )
+            self.finish(result)
+
 class SupportApis(tornado.web.RequestHandler):
     def get(self):
         apis = []
@@ -173,8 +236,30 @@ class SupportApis(tornado.web.RequestHandler):
                 "operation":["start","stop","status"]
             }
         }
+        mem = {
+            "url":"/api/v1/memory",
+            "description":"memory injection for docker",
+            "args":{
+                "action":["limit"],
+                "container_id":"",
+                "rate":"",
+                "operation":["start","stop","status"]
+            }
+        }
+        cpu = {
+            "url":"/api/v1/cpu",
+            "description":"cpu injection for docker",
+            "args":{
+                "action":["limit"],
+                "container_id":"",
+                "rate":"",
+                "operation":["start","stop","status"]
+            }
+        }
         apis.append(disk)
         apis.append(network)
+        apis.append(mem)
+        apis.append(cpu)
         self.finish(json.dumps(apis))
 
 
@@ -182,6 +267,8 @@ def make_app():
     return tornado.web.Application([
         (r"/api/v1/disk", DiskHandler),
         (r"/api/v1/network", NetworkHandler),
+        (r"/api/v1/cpu", CpuHandler),
+        (r"/api/v1/memory", MemoryHandler),
         (r"/api/v1/supportapis", SupportApis)
     ],
     )

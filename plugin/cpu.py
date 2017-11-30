@@ -14,12 +14,12 @@ class CpuExecutor(models.executor.Executor):
     def limit(self, operation, **kwargs):
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else -1
-        if rate > 100:
-            raise CheckException(msg = "rate shold not bigger then 100")
         if rate == "None":
             rate = -1
         if operation == "stop":
             rate = -1
+        if int(rate) > 100:
+            raise CheckException(msg = "rate shold not bigger then 100")
         cgroup_path = docker.get_cpu_cgroup_path(container_id) + "/" + "cpu.cfs_quota_us"
         data = rate
         if data != -1:

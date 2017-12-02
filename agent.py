@@ -7,8 +7,13 @@ import tornado.web
 import tornado.concurrent
 import tornado.gen
 
-from libs.misc import system,mkdirs
-from iexceptions import PluginNotExistsException,PluginSingletonException,CommandInvalidateException,ContainerLockedException,ExecuteException
+import libs.log
+from libs.misc import system, mkdirs
+from iexceptions import PluginNotExistsException, \
+        PluginSingletonException, \
+        CommandInvalidateException, \
+        ContainerLockedException, \
+        ExecuteException
 
 class Runner(object):
     executor = ThreadPoolExecutor(max_workers=24)
@@ -17,6 +22,7 @@ class Runner(object):
         self._running_queue = {}
         self._isolate = []
         self._lock_dir = "./data"
+
     @tornado.concurrent.run_on_executor
     def _async_execute(self,cmd):
         plugin = cmd.split()[0]
@@ -55,6 +61,7 @@ class Runner(object):
     def get_container_lock_msg(self, container_id):
         lock_path = self._lock_dir + "/" + container_id + "/lock"
         return self.get_lock_msg(lock_path)
+
     def delete_lock(self, container_id, lock_msg):
         """
             disk:operation:dirname
@@ -64,7 +71,10 @@ class Runner(object):
         origin_lock_msg = self.get_lock_msg(lock_path)
         if origin_lock_msg != lock_msg:
             raise DeleteLockMsgIllegalException(lock_msg=lock_msg, origin_lock_msg= origin_lock_msg)
-        os.remove(lock_path)
+        try:
+            os.remove(lock_path)
+        except:
+            raise DeleteLockMsgIllegalException(lock_msg="Unknow Delete Lock Error", origin_lock_msg= origin_lock_msg)
 
 
     @tornado.gen.coroutine
@@ -93,9 +103,9 @@ class DiskHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "cgroup_disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
+        cmd = "disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
             container_id=container_id, operation=operation, rate=rate)
-        print cmd
+        # print cmd
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "disk:" + action + ":" + dirname

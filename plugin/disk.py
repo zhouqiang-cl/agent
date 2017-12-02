@@ -43,6 +43,7 @@ class DiskExecutor(models.executor.Executor):
             
 
     def limit(self, operation, **kwargs):
+        "rate is use byte"
         dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not dirname:
             return

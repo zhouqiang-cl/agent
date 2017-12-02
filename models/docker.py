@@ -1,5 +1,5 @@
 import json
-from iexceptions import RunCommandException, NotCaliDevException
+from iexceptions import RunCommandException, NotCaliDevException, MountDirNotFoundException
 from libs.misc import system
 class Docker(object):
     def __init__(self):
@@ -19,6 +19,7 @@ class Docker(object):
         if not netdev.startswith("cali"):
             raise NotCaliDevException(dev=netdev)
         return netdev
+        
     @staticmethod
     def _valid_ip(ip):
         return True
@@ -47,14 +48,14 @@ class Docker(object):
         return dirname
 
     def get_mount_dir(self, container_id,dirname):
-        "Mounts"
+        # "Mounts"
         cmd = "docker inspect {container_id}".format(container_id=container_id)
         rc,so,se = system(cmd)
         mounts = json.loads(so)[0]["Mounts"]
         for mount in mounts:
             if mount["Destination"] == dirname:
                 return mount["Source"]
-        return None
+        raise MountDirNotFoundException(dirname = dirname)
 
 docker = Docker()
 if __name__ == "__main__":

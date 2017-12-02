@@ -35,3 +35,9 @@ class ExecuteException(Exception):
 class CheckException(Exception):
     def __init__(self, msg=None):
         self._msg = msg
+
+class MountDirNotFoundException(Exception):
+    """docstring for ClassName"""
+    def __init__(self, dirname):
+        self._dirname = dirname
+        

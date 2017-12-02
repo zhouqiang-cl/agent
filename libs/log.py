@@ -5,24 +5,19 @@
 '''
 import os
 import logging
+from libs.misc import mkdirs
 from inner_conf import LOG_DIR
+from tornado.log import access_log, app_log, gen_log
 
 
-def get_logger():
-    '''
-    @summary: init logger
-    @result: return a logger object
-    '''
-    logger_ = logging.getLogger("agent")
-    formatter = logging.Formatter
-    formatter = logging.Formatter(
-        '[%(asctime)s] [%(levelname)-8s] %(message)s', '%Y-%m-%d %H:%M:%S',)
-    handler = logging.FileHandler(LOG_DIR + '/agent.log')
-    handler.setFormatter(formatter)
-    logger_.addHandler(handler)
-    logger_.setLevel(logging.DEBUG)
-    return logger_
+app_handler = logging.FileHandler(LOG_DIR + "/app.log")
+access_handler = logging.FileHandler(LOG_DIR + "/access.log")
+gen_handler = logging.FileHandler(LOG_DIR + "/gen.log")
 
-if not os.path.isdir(LOG_DIR):
-    os.makedirs(LOG_DIR)
-logger = get_logger()
+app_log.addHandler(app_handler)
+access_log.addHandler(access_handler)
+gen_log.addHandler(gen_handler)
+
+access_log.setLevel(logging.INFO)
+app_log.setLevel(logging.INFO)
+gen_log.setLevel(logging.INFO)

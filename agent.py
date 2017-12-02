@@ -103,6 +103,7 @@ class PluginHanlder(tornado.web.RequestHandler):
         app_log.info("start run plugin:{plugin} cmd:{plugin_cmd}".format(plugin=plugin, plugin_cmd=plugin_cmd))
         if not docker.is_exist(container_id):
             self.finish({"status":"failed","msg":"can not found container_id in host"})
+            return
         if operation == "start":
             if self._runner.check_lock(container_id):
                 msg = plugin + ":" + action + ":" + add_on
@@ -111,7 +112,7 @@ class PluginHanlder(tornado.web.RequestHandler):
                     self._runner.require_lock(container_id, msg)
                     app_log.info("container_id:{container_id} operation:require_lock status:success".format(container_id=container_id))
                     app_log.info("container_id:{container_id} operation:run plugin status:start".format(container_id=container_id))
-                    result = yield self._runner.run_cmd(cmd)
+                    result = yield self._runner.run_cmd(plugin_cmd)
                     app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
                     self.finish(result)
                 except Exception as e:
@@ -132,7 +133,7 @@ class PluginHanlder(tornado.web.RequestHandler):
             msg = plugin +":" + action + ":" + add_on
             try:
                 app_log.info("container_id:{container_id} operation:run plugin status:start".format(container_id=container_id))
-                result = yield self._runner.run_cmd(cmd)
+                result = yield self._runner.run_cmd(plugin_cmd)
                 self._runner.delete_lock(container_id, msg )
                 app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
                 self.finish(result)

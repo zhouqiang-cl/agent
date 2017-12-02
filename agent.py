@@ -106,19 +106,20 @@ class PluginHanlder(tornado.web.RequestHandler):
                 try:
                     app_log.info("container_id:{container_id} operation:require_lock status:start".format(container_id=container_id))
                     self._runner.require_lock(container_id, msg)
-                    app_log.info("container_id:{container_id} operation:require_lock status:success")
-                    app_log.info("container_id:{container_id} operation:run plugin status:start")
+                    app_log.info("container_id:{container_id} operation:require_lock status:success".format(container_id=container_id))
+                    app_log.info("container_id:{container_id} operation:run plugin status:start".format(container_id=container_id))
                     result = yield self._runner.run_cmd(cmd)
-                    app_log.info("container_id:{container_id} operation:run plugin status:success")
+                    app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
                     self.finish(result)
                 except Exception as e:
+                    app_log.error(str(e))
                     app_log.error("container_id:{container_id} operation:none status:failed msg:{msg}".format(container_id=container_id,msg = e._msg))
-                    app_log.info("container_id:{container_id} operation:delete_lock status:start msg:due to exception above")
+                    app_log.info("container_id:{container_id} operation:delete_lock status:start msg:due to exception above".format(container_id=container_id))
                     self._runner.delete_lock(container_id, msg )
-                    app_log.info("container_id:{container_id} operation:delete_lock status:success")
+                    app_log.info("container_id:{container_id} operation:delete_lock status:success".format(container_id=container_id))
                     self.finish({"status":"failed","msg":e._msg})
             else:
-                app_log.info("container_id:{container_id} operation:get_lock_msg status:start msg:container locked")
+                app_log.info("container_id:{container_id} operation:get_lock_msg status:start msg:container locked".format(container_id=container_id))
                 lock_msg = self._runner.get_container_lock_msg(container_id).split(":")
                 app_log.info("container_id:{container_id} operation:get_lock_msg status:success")
                 msg = "there is a {job_type} job running for {container_id},operation is {operation}, additional msg is {add_msg}".format(
@@ -127,10 +128,10 @@ class PluginHanlder(tornado.web.RequestHandler):
         elif operation == "stop":
             msg = plugin +":" + action + ":" + add_on
             try:
-                app_log.info("container_id:{container_id} operation:run plugin status:start")
+                app_log.info("container_id:{container_id} operation:run plugin status:start".format(container_id=container_id))
                 result = yield self._runner.run_cmd(cmd)
                 self._runner.delete_lock(container_id, msg )
-                app_log.info("container_id:{container_id} operation:run plugin status:success")
+                app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
                 self.finish(result)
             except Exception as e:
                 app_log.error("container_id:{container_id} operation:none status:failed msg:{msg}".format(container_id=container_id,msg = e._msg))

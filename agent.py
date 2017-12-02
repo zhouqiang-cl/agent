@@ -105,6 +105,7 @@ class PluginHanlder(tornado.web.RequestHandler):
         if not docker.is_exist(container_id):
             self.finish({"status":"failed","msg":"can not found container_id in host"})
             app_log.info("container_id:{container_id} not exists".format(container_id=container_id))
+            return
         if operation == "start":
             if self._runner.check_lock(container_id):
                 msg = plugin + ":" + action + ":" + add_on

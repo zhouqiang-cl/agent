@@ -9,21 +9,23 @@ spec:
       labels:
         app: centos
     spec:
+      hostNetwork: true
       containers:
       - name: centos
         image: uhub.service.ucloud.cn/pingcap/centos-daemon
-        securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
-        env:
-        - name: PYTHONPATH
-          value: "/root/agent"
         ports:
         - containerPort: 8888
           protocol: TCP
-          hostPort: 8888
-        command: ["/usr/bin/python", "agent"]
+        workingDir: /root/agent
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
+        env:
+        - name: PYTHONPATH
+          value: "/root/agent"
+        command: ["/usr/bin/python", "agent.py"]
         volumeMounts:
         - mountPath: /var/run/docker.sock
           name: docker-sock
@@ -66,6 +68,3 @@ spec:
       - name: log-data
         hostPath:
           path: /tmp/logs
-
-
-#-v /:/host -v $(which ip):/usr/bin/ip -v $(which tc):/usr/bin/tc -v /tmp/data:/root/agent/data

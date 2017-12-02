@@ -106,6 +106,10 @@ class PluginHanlder(tornado.web.RequestHandler):
             self.finish({"status":"failed","msg":"can not found container_id in host"})
             app_log.info("container_id:{container_id} not exists".format(container_id=container_id))
             return
+        if operation not in ["start","stop","status"]:
+            self.finish({"status":"failed","msg":"invlidate operation"})
+            app_log.info("invlidate operation:{operation}".format(operation=operation))
+            return
         if operation == "start":
             if self._runner.check_lock(container_id):
                 msg = plugin + ":" + action + ":" + add_on

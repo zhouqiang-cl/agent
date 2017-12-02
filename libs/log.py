@@ -9,7 +9,7 @@ from libs.misc import mkdirs
 from inner_conf import LOG_DIR
 from tornado.log import access_log, app_log, gen_log
 
-
+mkdirs(LOG_DIR)
 app_handler = logging.FileHandler(LOG_DIR + "/app.log")
 access_handler = logging.FileHandler(LOG_DIR + "/access.log")
 gen_handler = logging.FileHandler(LOG_DIR + "/gen.log")

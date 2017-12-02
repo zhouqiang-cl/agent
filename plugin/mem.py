@@ -4,6 +4,7 @@ import models.executor
 from models.docker import docker
 from models.sys import sys
 from models.agent import agent
+from libs.unit import to_byte
 from iexceptions import ExecuteException
 
 class MemExecutor(models.executor.Executor):
@@ -14,11 +15,9 @@ class MemExecutor(models.executor.Executor):
     def limit(self, operation, **kwargs):
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
-        if rate == "None":
-            rate = -1
+        data = to_byte(rate)
         if operation == "stop":
-            rate = -1
-        data = rate
+            data = -1
         cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
         sys.write_to_cgroup(data, cgroup_path)
 
@@ -41,13 +40,13 @@ if __name__ == "__main__":
         '-r',
         '--rate',
         dest='rate',
-        help='how much rate to operation')
+        help='how much rate to operation,can use K/M/G, default in B')
 
     parser.add_argument(
         '-c',
-        '--containerid',
-        dest='containerid',
-        help='which containerid to operation ')
+        '--container_id',
+        dest='container_id',
+        help='which container id to operation ')
 
     args = parser.parse_args()
     executor = MemExecutor()
@@ -56,7 +55,7 @@ if __name__ == "__main__":
             args.operation,
             action=args.action,
             rate=args.rate,
-            container_id=args.containerid)
-    except ExecuteException as e:
+            container_id=args.container_id)
+    except ExecuteException,InspectDockerError as e:
         print e._msg
         exit(1)

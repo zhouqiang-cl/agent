@@ -14,8 +14,6 @@ class CpuExecutor(models.executor.Executor):
     def limit(self, operation, **kwargs):
         container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else -1
-        if rate == "None":
-            rate = -1
         if operation == "stop":
             rate = -1
         if int(rate) > 100:
@@ -49,9 +47,9 @@ if __name__ == "__main__":
 
     parser.add_argument(
         '-c',
-        '--containerid',
-        dest='containerid',
-        help='which containerid to operation ')
+        '--container_id',
+        dest='container_id',
+        help='which container id to operation ')
 
     args = parser.parse_args()
     executor = CpuExecutor()
@@ -60,10 +58,7 @@ if __name__ == "__main__":
             args.operation,
             action=args.action,
             rate=args.rate,
-            container_id=args.containerid)
-    except ExecuteException as e:
-        print e._msg
-        exit(1)
-    except CheckException as e:
+            container_id=args.container_id)
+    except ExecuteException,CheckException,InspectDockerError as e:
         print e._msg
         exit(1)

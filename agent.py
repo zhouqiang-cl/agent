@@ -103,9 +103,12 @@ class DiskHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
-            container_id=container_id, operation=operation, rate=rate)
-        # print cmd
+        if rate:
+            cmd = "disk.py -a {action} -d {dirname} -c {container_id} -r {rate} {operation}".format(action=action, dirname=dirname, 
+                container_id=container_id, operation=operation, rate=rate)
+        else:
+            cmd = "disk.py -a {action} -d {dirname} -c {container_id} {operation}".format(action=action, dirname=dirname, 
+                container_id=container_id, operation=operation)
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "disk:" + action + ":" + dirname
@@ -136,8 +139,12 @@ class NetworkHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
-            container_ip=container_ip, operation=operation, rate=rate)
+        if rate:
+            cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
+                container_ip=container_ip, operation=operation, rate=rate)
+        else:
+            cmd = "network.py -a {action} --container_ip {container_ip} -r {rate} {operation}".format(action=action, 
+                container_ip=container_ip, operation=operation, rate=rate)
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "network:" + action + ":" + container_ip
@@ -168,8 +175,12 @@ class CpuHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "cpu.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
-            container_id=container_id, operation=operation, rate=rate)
+        if rate:
+            cmd = "cpu.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
+                container_id=container_id, operation=operation, rate=rate)
+        else:
+            cmd = "cpu.py -a {action} --containerid {container_id} {operation}".format(action=action, 
+                container_id=container_id, operation=operation)
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "network:" + action + ":noop"
@@ -199,8 +210,12 @@ class MemoryHandler(tornado.web.RequestHandler):
         container_id = self.get_argument("container_id")
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
-        cmd = "mem.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
-            container_id=container_id, operation=operation, rate=rate)
+        if rate:
+            cmd = "mem.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
+                container_id=container_id, operation=operation, rate=rate)
+        else:
+            cmd = "mem.py -a {action} --containerid {container_id} {operation}".format(action=action, 
+                container_id=container_id, operation=operation)
         if operation == "start":
             if self._runner.check_lock(container_id):                
                 msg = "memory:" + action + ":noop"

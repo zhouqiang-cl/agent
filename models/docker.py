@@ -1,9 +1,10 @@
 import json
-from iexceptions import RunCommandException, NotCaliDevException, MountDirNotFoundException
+from iexceptions import RunCommandException, NotCaliDevException, MountDirNotFoundException,InspectDockerError
 from libs.misc import system
 class Docker(object):
     def __init__(self):
         self._ip_cmd = "ip"
+        self._docker = "docker"
         self._cgroup_blkio_dir = "/host/sys/fs/cgroup/blkio"
         self._cgroup_cpu_dir = "/host/sys/fs/cgroup/cpu"
         self._cgroup_mem_dir = "/host/sys/fs/cgroup/memory"
@@ -19,33 +20,30 @@ class Docker(object):
         if not netdev.startswith("cali"):
             raise NotCaliDevException(dev=netdev)
         return netdev
-        
+
     @staticmethod
     def _valid_ip(ip):
         return True
 
-    def get_cgroup_path(self, container_id):
-        """docker inspect 7628d0ca4572"""
-        # return yaml[0]["State"]["Pid"]
-        cmd = "docker inspect {container_id}".format(container_id=container_id)
+    def get_cgroup_path(self,base_dir, container_id):
+        cmd = "{docker} inspect {container_id}".format(docker= self._docker, container_id=container_id)
         rc,so,se = system(cmd)
+        if rc:
+            raise InspectDockerError(docker = container_id, msg = so)
         so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
-        dirname = self._cgroup_blkio_dir + so + "/" + container_id
+        dirname = base_dir + so + "/" + container_id
         return dirname
+
+
 
     def get_cpu_cgroup_path(self, container_id):
-        cmd = "docker inspect {container_id}".format(container_id=container_id)
-        rc,so,se = system(cmd)
-        so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
-        dirname = self._cgroup_cpu_dir + so + "/" + container_id
-        return dirname
+        return self.get_cgroup_path(self._cgroup_cpu_dir, container_id)
 
     def get_mem_cgroup_path(self, container_id):
-        cmd = "docker inspect {container_id}".format(container_id=container_id)
-        rc,so,se = system(cmd)
-        so = json.loads(so)[0]["HostConfig"]["CgroupParent"]
-        dirname = self._cgroup_mem_dir + so + "/" + container_id
-        return dirname
+        return self.get_cgroup_path(self._cgroup_mem_dir, container_id)
+
+    def get_blkio_cgroup_path(self, container_id):
+        return self.get_cgroup_path(self._cgroup_blkio_dir, container_id)
 
     def get_mount_dir(self, container_id,dirname):
         # "Mounts"
@@ -59,5 +57,5 @@ class Docker(object):
 
 docker = Docker()
 if __name__ == "__main__":
-    print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")
-    print docker.get_mount_dir("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c","/test-pd")
+    # print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")
+    # print docker.get_mount_dir("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c","/test-pd")

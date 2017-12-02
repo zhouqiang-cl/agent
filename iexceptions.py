@@ -38,6 +38,11 @@ class CheckException(Exception):
 
 class MountDirNotFoundException(Exception):
     """docstring for ClassName"""
-    def __init__(self, dirname):
+    def __init__(self, dirname=None):
         self._dirname = dirname
-        
+        self._msg = "dirname:{dirname} not found in host".format(dirname = dirname)
+
+class InspectDockerError(Exception):
+    def __init__(self, docker=None, msg = None):
+        self._docker = docker
+        self._msg = "docker:{} inspect docker error, extend msg is: {msg}".format(docker=docker, msg = msg)

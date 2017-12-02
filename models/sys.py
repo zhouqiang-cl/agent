@@ -1,5 +1,5 @@
 from libs.misc import system
-from iexceptions import ExecuteException
+from iexceptions import ExecuteException,GetMountBlockException
 class Sys(object):
     def __init__(self):
         self._prefix = "/host"
@@ -24,7 +24,7 @@ class Sys(object):
 
     def get_block_by_mount_in_docker(self, mount):
         cmd = "cat  {mount_dir}".format(mount_dir = self._prefix + "/proc/mounts")
-        mount = self._prefix + mount
+        mount = self._prefix + "/" + mount.split("/")[1]
         rc,so,se = system(cmd)
         for line in so.split("\n"):
             line = line.strip()
@@ -32,6 +32,7 @@ class Sys(object):
                 continue
             if line.split()[1] == mount:
                 return line.split()[0]
+        raise GetMountBlockException(mount=mount)
 
     def write_to_cgroup(self,value, cgoup_path):
         cmd = "echo '{data}' > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)

@@ -21,6 +21,13 @@ class Docker(object):
             raise NotCaliDevException(dev=netdev)
         return netdev
 
+    def is_exist(self, container_id):
+        cmd = "{docker} inspect {container_id}".format(docker= self._docker, container_id=container_id)
+        rc,so,se = system(cmd)
+        if rc:
+            raise False
+        return True
+
     @staticmethod
     def _valid_ip(ip):
         return True

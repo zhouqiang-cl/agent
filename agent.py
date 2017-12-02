@@ -8,6 +8,7 @@ import tornado.concurrent
 import tornado.gen
 
 import libs.log
+from models.docker import docker
 from libs.misc import system, mkdirs
 from iexceptions import PluginNotExistsException, \
         PluginSingletonException, \
@@ -100,6 +101,8 @@ class PluginHanlder(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def run_plugin(self, container_id, plugin, action, operation, plugin_cmd, add_on):
         app_log.info("start run plugin:{plugin} cmd:{plugin_cmd}".format(plugin=plugin, plugin_cmd=plugin_cmd))
+        if not docker.is_exist(container_id):
+            self.finish({"status":"failed","msg":"can not found container_id in host"})
         if operation == "start":
             if self._runner.check_lock(container_id):
                 msg = plugin + ":" + action + ":" + add_on

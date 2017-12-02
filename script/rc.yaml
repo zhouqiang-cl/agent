@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: centos
+spec:
+  replicas: 2
+  selector:
+    app: centos
+  template:
+    metadata:
+      name: centos
+      labels:
+        app: centos
+    spec:
+      containers:
+      - name: centos
+        image: centos
+        securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+        command: ["/bin/ping", "127.0.0.1"]
+        volumeMounts:
+        - mountPath: /test-pd
+          name: test-volume
+      volumes:
+      - name: test-volume
+        hostPath:
+           path: /tidb/test_data1

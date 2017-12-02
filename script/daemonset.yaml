@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: centos
+spec:
+  template:
+    metadata:
+      name: centos
+      labels:
+        app: centos
+    spec:
+      containers:
+      - name: centos
+        image: centos
+        securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+        command: ["/bin/ping", "127.0.0.1"]
+        volumeMounts:
+        - mountPath: /test-pd
+          name: test-volume
+      volumes:
+      - name: test-volume
+        hostPath:
+           path: /tidb/test_data1

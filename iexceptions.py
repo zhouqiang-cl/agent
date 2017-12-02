@@ -22,10 +22,10 @@ class RunCommandException(Exception):
 
 class NotCaliDevException(Exception):
     def __init__(self, dev=None):
-        pass
+        self._msg = "dev:{dev}".format(dev=dev)
 class ContainerLockedException(Exception):
     def __init__(self, container_id=None, lock_msg=None):
-        pass
+        self._msg = "container_id:{container_id} lock_msg:{lock_msg}".format(container_id=container_id, lock_msg=lock_msg)
 
 class ExecuteException(Exception):
     def __init__(self, msg = None):

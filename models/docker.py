@@ -25,7 +25,7 @@ class Docker(object):
         cmd = "{docker} inspect {container_id}".format(docker= self._docker, container_id=container_id)
         rc,so,se = system(cmd)
         if rc:
-            raise False
+            return False
         return True
 
     @staticmethod

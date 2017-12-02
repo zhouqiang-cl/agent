@@ -16,7 +16,7 @@ access_handler = logging.FileHandler(LOG_DIR + "/access.log")
 gen_handler = logging.FileHandler(LOG_DIR + "/gen.log")
 
 formatter = tornado.log.LogFormatter(
-    fmt='%(color)s[ %(asctime)s ] %(end_color)s %(message)s',
+    fmt='%(color)s[ %(asctime)s %(filename)s:%(lineno)d] %(end_color)s %(message)s',
     datefmt='%y/%m/%d %H:%M:%S')
 
 app_handler.setFormatter(formatter)

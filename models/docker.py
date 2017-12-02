@@ -63,6 +63,3 @@ class Docker(object):
         raise MountDirNotFoundException(dirname = dirname)
 
 docker = Docker()
-if __name__ == "__main__":
-    # print docker.get_cgroup_path("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c")
-    # print docker.get_mount_dir("b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c","/test-pd")

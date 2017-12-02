@@ -7,6 +7,7 @@ import os
 import logging
 from libs.misc import mkdirs
 from inner_conf import LOG_DIR
+import tornado.log
 from tornado.log import access_log, app_log, gen_log
 
 mkdirs(LOG_DIR)

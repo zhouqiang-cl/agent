@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def to_byte(data):
     data = data.lower()
     if data.endswith("b"):

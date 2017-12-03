@@ -4,7 +4,7 @@ import models.executor
 from models.docker import docker
 from models.sys import sys
 from models.agent import agent
-from iexceptions import ExecuteException
+from iexceptions import ExecuteException,MountDirNotFoundException,InspectDockerError
 from libs.unit import to_byte
 
 class DiskExecutor(models.executor.Executor):

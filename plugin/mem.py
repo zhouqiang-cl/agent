@@ -5,7 +5,7 @@ from models.docker import docker
 from models.sys import sys
 from models.agent import agent
 from libs.unit import to_byte
-from iexceptions import ExecuteException
+from iexceptions import ExecuteException,InspectDockerError
 
 class MemExecutor(models.executor.Executor):
     def __init__(self):

@@ -4,7 +4,7 @@ import models.executor
 from models.docker import docker
 from models.sys import sys
 from models.agent import agent
-from iexceptions import ExecuteException,CheckException
+from iexceptions import ExecuteException,CheckException,InspectDockerError
 
 class CpuExecutor(models.executor.Executor):
     def __init__(self):

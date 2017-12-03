@@ -17,12 +17,15 @@ class DiskExecutor(models.executor.Executor):
             dd if=/dev/zero of=/mnt/disk6/tst.img bs=4M count=60K
         """
         # pass
+
         dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not dirname:
             return
         mount_dir = docker.get_mount_dir(container_id, dirname)
-        agent.set_full(mount_dir)
-
+        if operation == "start":
+            agent.set_full(mount_dir)
+        else:
+            agent.set_empty(mount_dir)
 
     def fail(self, operation, **kwargs):
         """disk use limit iops for failed, in the future , we will use debugfs to simulation"""
@@ -70,7 +73,7 @@ if __name__ == "__main__":
         '-a',
         '--action',
         dest='action',
-        metavar='fail/limit',
+        metavar='fail/full/limit',
         help='which action to take ')
 
     parser.add_argument(

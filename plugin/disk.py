@@ -21,6 +21,9 @@ class DiskExecutor(models.executor.Executor):
         dirname = kwargs["dirname"] if "dirname" in kwargs and kwargs["dirname"] else None
         if not dirname:
             return
+        container_id = kwargs["container_id"] if "container_id" in kwargs and kwargs["container_id"] else None
+        if not container_id:
+            return
         mount_dir = docker.get_mount_dir(container_id, dirname)
         if operation == "start":
             agent.set_full(mount_dir)

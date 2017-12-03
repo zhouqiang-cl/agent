@@ -23,6 +23,10 @@ class CpuExecutor(models.executor.Executor):
         if data != -1:
             data = int(rate)*1000
         sys.write_to_cgroup(data, cgroup_path)
+        cgroup_path = docker.get_cpu_cgroup_path(container_id) + "/" + "cpu.cfs_period_us"
+        data = 100000
+        sys.write_to_cgroup(data, cgroup_path)
+        # cpu.cfs_period_us
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

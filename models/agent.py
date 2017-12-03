@@ -7,7 +7,7 @@ class Agent(object):
         self._prefix = "/host"
 
     def set_full(self, dirname):
-        cmd =  "dd if=/dev/zero of={dirname}/tst.img bs=4M count=27K"(dirname = self._prefix + dirname)
+        cmd =  "dd if=/dev/zero of={dirname}/tst.img bs=4M count=27K".format(dirname = self._prefix + dirname)
         rc,so,se = system(cmd)
         if rc:
             raise ExecuteException(msg = so)

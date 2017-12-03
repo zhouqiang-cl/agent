@@ -36,34 +36,12 @@ class NetworkExecutor(models.executor.Executor):
     
     def loss(self, operation, **kwargs):
         return self.common_runner("loss",operation,"%", **kwargs)
-        
-    # def forbid(self, operation, **kwargs):
-    #     src = kwargs["src"] if "src" in kwargs and kwargs["src"] else None
-    #     if operation == "start":
-    #         cmd = "{iptables} -I INPUT -s {src} -j DROP".format(iptables=self._iptables,src=src)
-    #     elif operation == "stop":
-    #         cmd = "{iptables} -D INPUT -s {src} -j DROP".format(iptables=self._iptables,src=src)
-    #     self._execute_or_revert_cmd(cmd)
-    #     result = self._report_iptables()
-    #     return result
-    
-    def _report_tc(self, interface):
-        cmd = "{tc} qdisc show dev {interface}".format(tc=self._tc, interface=interface)
-        ret = self._get_output(cmd)
-        return ret
 
-    def _report_iptables(self):
-        cmd = "{iptables} -L".format(iptables=self._iptables)
-        ret = self._get_output(cmd)
-        return ret
-    
-    def record(self):
-        pass
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Network Injection Simulation')
     parser.add_argument('operation', metavar='start/stop/status',
                         help='operations')
-    parser.add_argument('-a','--action', dest='action',metavar='fail/loss/delay/limit/forbid',
+    parser.add_argument('-a','--action', dest='action',metavar='fail/loss/delay/limit',
                                     help='which action to take ')
     parser.add_argument('-i','--interface', dest='interface',
                         help='which interface to operation ')

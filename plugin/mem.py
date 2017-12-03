@@ -17,7 +17,9 @@ class MemExecutor(models.executor.Executor):
         rate = kwargs["rate"] if "rate" in kwargs and kwargs["rate"] else 1048576
         data = to_byte(rate)
         if operation == "stop":
-            data = -1
+            data = 9223372036854771712
+        cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
+        sys.write_to_cgroup(data, cgroup_path)
         cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
         sys.write_to_cgroup(data, cgroup_path)
 

@@ -229,18 +229,18 @@ class SupportApis(tornado.web.RequestHandler):
                 "dirname":"",
                 "container_id":"",
                 "rate":"",
-                "operation":["start","stop","status"]
+                "operation":["start","stop"]
             }
         }
         network = {
             "url":"/api/v1/network",
             "description":"network injection for docker",
             "args":{
-                "action":["delay","fail", "loss","limit"],
+                "action":["delay","fail", "loss"],
                 "container_id":"",
                 "container_ip":"",
                 "rate":"",
-                "operation":["start","stop","status"]
+                "operation":["start","stop"]
             }
         }
         mem = {
@@ -250,7 +250,7 @@ class SupportApis(tornado.web.RequestHandler):
                 "action":["limit"],
                 "container_id":"",
                 "rate":"",
-                "operation":["start","stop","status"]
+                "operation":["start","stop"]
             }
         }
         cpu = {
@@ -260,7 +260,7 @@ class SupportApis(tornado.web.RequestHandler):
                 "action":["limit"],
                 "container_id":"",
                 "rate":"",
-                "operation":["start","stop","status"]
+                "operation":["start","stop"]
             }
         }
         apis.append(disk)

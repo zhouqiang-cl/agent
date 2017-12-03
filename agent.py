@@ -195,10 +195,10 @@ class CpuHandler(PluginHanlder):
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
         if rate:
-            cmd = "cpu.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
+            cmd = "cpu.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
                 container_id=container_id, operation=operation, rate=rate)
         else:
-            cmd = "cpu.py -a {action} --containerid {container_id} {operation}".format(action=action, 
+            cmd = "cpu.py -a {action} --container_id {container_id} {operation}".format(action=action, 
                 container_id=container_id, operation=operation)
         self.run_plugin(container_id, "cpu", action, operation, cmd, "noop")
 class MemoryHandler(PluginHanlder):
@@ -211,10 +211,10 @@ class MemoryHandler(PluginHanlder):
         operation = self.get_argument("operation")
         rate = self.get_argument("rate",None)
         if rate:
-            cmd = "mem.py -a {action} --containerid {container_id} -r {rate} {operation}".format(action=action, 
+            cmd = "mem.py -a {action} --container_id {container_id} -r {rate} {operation}".format(action=action, 
                 container_id=container_id, operation=operation, rate=rate)
         else:
-            cmd = "mem.py -a {action} --containerid {container_id} {operation}".format(action=action, 
+            cmd = "mem.py -a {action} --container_id {container_id} {operation}".format(action=action, 
                 container_id=container_id, operation=operation)
         self.run_plugin(container_id, "cpu", action, operation, cmd, "noop")
 

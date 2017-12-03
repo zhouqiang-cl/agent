@@ -31,7 +31,7 @@ class Runner(object):
         cmd = self._plugin_dir + "/" + cmd
         rc,so,se = system(cmd)
         if rc:
-            raise ExecuteException(msg = so)
+            raise ExecuteException(msg = str(so) + str(se))
         return {"result":"success"}
 
     def check_lock(self, container_id):
@@ -225,7 +225,7 @@ class SupportApis(tornado.web.RequestHandler):
             "url":"/api/v1/disk",
             "description":"disk injection for docker",
             "args":{
-                "action":["limit","full","error"],
+                "action":["limit","full","fail"],
                 "dirname":"",
                 "container_id":"",
                 "rate":"",
@@ -236,7 +236,7 @@ class SupportApis(tornado.web.RequestHandler):
             "url":"/api/v1/network",
             "description":"network injection for docker",
             "args":{
-                "action":["delay","fail", "loss","limit","forbid"],
+                "action":["delay","fail", "loss","limit"],
                 "container_id":"",
                 "container_ip":"",
                 "rate":"",

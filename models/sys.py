@@ -38,8 +38,15 @@ class Sys(object):
         cmd = "echo '{data}' > {cgoup_path}".format(data=value, cgoup_path=cgoup_path)
         rc,so,se = system(cmd)
         if rc:
-            raise ExecuteException(msg = so)
+            raise ExecuteException(msg = so + se)
         return True
+
+    def get_cgroup_value(self, cgoup_path):
+        cmd = "cat {cgoup_path}".format(cgoup_path=cgoup_path)
+        rc,so,se = system(cmd)
+        if rc:
+            raise ExecuteException(msg = so + se)
+        return so
 sys = Sys()
 if __name__ == "__main__":
     # sys = Sys()

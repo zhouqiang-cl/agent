@@ -18,10 +18,20 @@ class MemExecutor(models.executor.Executor):
         data = to_byte(rate)
         if operation == "stop":
             data = 9223372036854771712
+        # old_value = sys.get_cgroup_value()
         cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
-        sys.write_to_cgroup(data, cgroup_path)
-        cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
-        sys.write_to_cgroup(data, cgroup_path)
+        old_value = sys.get_cgroup_value()
+
+        if data > old_value:
+            cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
+            sys.write_to_cgroup(data, cgroup_path)
+            cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
+            sys.write_to_cgroup(data, cgroup_path)
+        else:
+            cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
+            sys.write_to_cgroup(data, cgroup_path)
+            cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
+            sys.write_to_cgroup(data, cgroup_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

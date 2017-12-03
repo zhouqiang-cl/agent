@@ -46,3 +46,8 @@ class InspectDockerError(Exception):
     def __init__(self, docker=None, msg = None):
         self._docker = docker
         self._msg = "docker:{} inspect docker error, extend msg is: {msg}".format(docker=docker, msg = msg)
+
+class GetMountBlockException(Exception):
+    def __init__(self, mount=None):
+        self._mount = mount
+        self._msg = "get mount {mount} failed".format(mount=mount)

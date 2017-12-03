@@ -100,6 +100,6 @@ if __name__ == "__main__":
             dirname=args.dirname,
             rate=args.rate,
             container_id=args.container_id)
-    except ExecuteException,MountDirNotFoundException,InspectDockerError as e:
+    except (ExecuteException,MountDirNotFoundException,InspectDockerError) as e:
         print e._msg
         exit(1)

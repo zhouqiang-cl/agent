@@ -98,7 +98,7 @@ class PluginHanlder(tornado.web.RequestHandler):
     def prepare(self):
         self._runner = runner
 
-    @tornado.web.asynchronous
+    # @tornado.web.asynchronous
     @tornado.gen.coroutine
     def run_plugin(self, container_id, plugin, action, operation, plugin_cmd, add_on):
         app_log.info("start run plugin:{plugin} cmd:{plugin_cmd}".format(plugin=plugin, plugin_cmd=plugin_cmd))
@@ -119,8 +119,8 @@ class PluginHanlder(tornado.web.RequestHandler):
                     app_log.info("container_id:{container_id} operation:require_lock status:success".format(container_id=container_id))
                     app_log.info("container_id:{container_id} operation:run plugin status:start".format(container_id=container_id))
                     result = yield self._runner.run_cmd(plugin_cmd)
-                    app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
-                    self.finish(result)
+                    app_log.info("container_id:{container_id} operation:run plugin status:success, msg:{result}".format(container_id=container_id, result=result))
+                    self.finish({"status":"success"})
                 except Exception as e:
                     app_log.error(str(e))
                     app_log.error("container_id:{container_id} operation:none status:failed msg:{msg}".format(container_id=container_id,msg = e._msg))
@@ -148,7 +148,7 @@ class PluginHanlder(tornado.web.RequestHandler):
 
 class DiskHandler(PluginHanlder):
     @tornado.web.asynchronous
-    @tornado.gen.coroutine
+    # @tornado.gen.coroutine
     def get(self):
         """./plugin/cgroup_disk.py -a limit -d /test-pd -c b63085b8ad9b540ee3603572ca95c2552061c1415564834c8ca3c9e578e7400c start"""
         action = self.get_argument("action")
@@ -166,7 +166,7 @@ class DiskHandler(PluginHanlder):
 
 class NetworkHandler(PluginHanlder):
     @tornado.web.asynchronous
-    @tornado.gen.coroutine
+    # @tornado.gen.coroutine
     def get(self):
         action = self.get_argument("action")
         container_ip = self.get_argument("container_ip")
@@ -183,7 +183,7 @@ class NetworkHandler(PluginHanlder):
 
 class CpuHandler(PluginHanlder):
     @tornado.web.asynchronous
-    @tornado.gen.coroutine
+    # @tornado.gen.coroutine
     def get(self):
         action = self.get_argument("action")
         # container_ip = self.get_argument("container_ip")
@@ -199,7 +199,7 @@ class CpuHandler(PluginHanlder):
         self.run_plugin(container_id, "cpu", action, operation, cmd, "noop")
 class MemoryHandler(PluginHanlder):
     @tornado.web.asynchronous
-    @tornado.gen.coroutine
+    # @tornado.gen.coroutine
     def get(self):
         action = self.get_argument("action")
         # container_ip = self.get_argument("container_ip")

@@ -59,6 +59,6 @@ if __name__ == "__main__":
             action=args.action,
             rate=args.rate,
             container_id=args.container_id)
-    except ExecuteException,CheckException,InspectDockerError as e:
+    except (ExecuteException,CheckException,InspectDockerError) as e:
         print e._msg
         exit(1)

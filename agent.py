@@ -143,8 +143,12 @@ class PluginHanlder(tornado.web.RequestHandler):
                 self._runner.delete_lock(container_id, msg )
                 app_log.info("container_id:{container_id} operation:run plugin status:success".format(container_id=container_id))
                 self.finish(result)
+            except IOError as e:
+                app_log.info("container_id:{container_id} msg:lock file not found".format(container_id=container_id))
+                self.finish({"status":"success","msg":"plugin not running"})
             except Exception as e:
                 app_log.error("container_id:{container_id} operation:none status:failed msg:{msg}".format(container_id=container_id,msg = e._msg))
+                self.finish({"status":"failed","msg":str(e._msg)})
 
 class DiskHandler(PluginHanlder):
     @tornado.web.asynchronous

@@ -22,7 +22,7 @@ class MemExecutor(models.executor.Executor):
         cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
         old_value = sys.get_cgroup_value(cgroup_path)
 
-        if data > old_value:
+        if int(data) > int(old_value):
             cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.memsw.limit_in_bytes"
             sys.write_to_cgroup(data, cgroup_path)
             cgroup_path = docker.get_mem_cgroup_path(container_id) + "/" + "memory.limit_in_bytes"
